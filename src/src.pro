@@ -1,6 +1,6 @@
 QT -= qt core gui
 
-TARGET = KitsunemimiHanamiPersistence
+TARGET = KitsunemimiSakuraDatabase
 TEMPLATE = lib
 CONFIG += c++17
 VERSION = 0.1.0
@@ -21,8 +21,8 @@ INCLUDEPATH += $$PWD \
                $$PWD/../include
 
 HEADERS += \
-    ../include/libKitsunemimiSakuraDatabase/users.h
+    ../include/libKitsunemimiSakuraDatabase/sql_database.h
 
 SOURCES += \
-    users.cpp
+    sql_database.cpp
 

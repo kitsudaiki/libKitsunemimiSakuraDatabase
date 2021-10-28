@@ -5,7 +5,7 @@ QT -= qt core gui
 CONFIG   -= app_bundle
 CONFIG += c++17 console
 
-LIBS += -L../../src -lKitsunemimiHanamiPersistence
+LIBS += -L../../src -lKitsunemimiSakuraDatabase
 
 LIBS += -L../../../libKitsunemimiSqlite/src -lKitsunemimiSqlite
 LIBS += -L../../../libKitsunemimiSqlite/src/debug -lKitsunemimiSqlite
