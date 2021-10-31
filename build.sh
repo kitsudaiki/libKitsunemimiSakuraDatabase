@@ -82,7 +82,7 @@ function get_required_private_repo_github () {
 
 get_required_kitsune_lib_repo "libKitsunemimiCommon" "v0.22.0" 4 "staticlib"
 
-get_required_private_repo_github  "libKitsunemimiSqlite" "v0.1.0" 4 "staticlib"
+get_required_private_repo_github  "libKitsunemimiSqlite" "master" 4 "staticlib"
 
 #-----------------------------------------------------------------------------------------------------------------
 

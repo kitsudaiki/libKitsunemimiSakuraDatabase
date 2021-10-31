@@ -105,15 +105,19 @@ SqlDatabase::createTableCreateQuery()
  * @return created sql-query
  */
 const std::string
-SqlDatabase::createSelectQuery(const std::string &compare)
+SqlDatabase::createSelectQuery(const std::string &colName,
+                               const std::string &compare)
 {
-    const std::string command = "SELECT * from "
-                                + m_tableName
-                                + " WHERE "
-                                + m_tableHeader.at(0).name
-                                + "='"
-                                + compare
-                                + "';";
+    std::string command = "SELECT * from " + m_tableName;
+    if(colName != "")
+    {
+        command.append(" WHERE ");
+        command.append(colName);
+        command.append("='");
+        command.append(compare);
+        command.append("';");
+    }
+
     return command;
 }
 
