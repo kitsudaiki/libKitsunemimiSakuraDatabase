@@ -21,8 +21,10 @@ INCLUDEPATH += $$PWD \
                $$PWD/../include
 
 HEADERS += \
+    ../include/libKitsunemimiSakuraDatabase/sql_table.h \
     ../include/libKitsunemimiSakuraDatabase/sql_database.h
 
 SOURCES += \
-    sql_database.cpp
+    sql_database.cpp \
+    sql_table.cpp
 

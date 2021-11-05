@@ -1,5 +1,5 @@
-﻿/**
- * @file       sql_database.cpp
+/**
+ * @file       sql_database.h
  *
  * @author     Tobias Anker <tobias.anker@kitsunemimi.moe>
  *
@@ -27,161 +27,83 @@ namespace Kitsunemimi
 namespace Sakura
 {
 
-/**
- * @brief constructor
- */
-SqlDatabase::SqlDatabase() {}
-
-/**
- * @brief destructor
- */
-SqlDatabase::~SqlDatabase() {}
-
-/**
- * @brief create a sql-query to create a table
- *
- * @return created sql-query
- */
-const std::string
-SqlDatabase::createTableCreateQuery()
+SqlDatabase::SqlDatabase()
 {
-    std::string command = "CREATE TABLE IF NOT EXISTS ";
-    command.append(m_tableName);
-    command.append(" (");
 
-    // create all field of the table
-    for(uint32_t i = 0; i < m_tableHeader.size(); i++)
-    {
-        const DbHeaderEntry* entry = &m_tableHeader[i];
-        if(i != 0) {
-            command.append(" , ");
-        }
-        command.append(entry->name + "  ");
-
-        // set type of the value
-        switch(entry->type)
-        {
-            case STRING_TYPE:
-                if(entry->maxLength > 0)
-                {
-                    command.append("varchar(");
-                    command.append(std::to_string(entry->maxLength));
-                    command.append(") ");
-                }
-                else
-                {
-                   command.append("text ");
-                }
-                break;
-            case INT_TYPE:
-                command.append("int ");
-                break;
-            case BOOL_TYPE:
-                command.append("bool ");
-                break;
-        }
-
-        // set if key is primary key
-        if(entry->isPrimary) {
-            command.append("PRIMARY KEY ");
-        }
-
-        // set if value is not allowed to be null
-        if(entry->allowNull == false) {
-            command.append("NOT NULL ");
-        }
-    }
-
-    command.append(");");
-
-    return command;
 }
 
 /**
- * @brief create a sql-query to get a line from the table
- *
- * @param compare value to compare against the first comlumn
- *
- * @return created sql-query
- */
-const std::string
-SqlDatabase::createSelectQuery(const std::string &colName,
-                               const std::string &compare)
-{
-    std::string command = "SELECT * from " + m_tableName;
-    if(colName != "")
-    {
-        command.append(" WHERE ");
-        command.append(colName);
-        command.append("='");
-        command.append(compare);
-        command.append("';");
-    }
-
-    return command;
-}
-
-/**
- * @brief create a sql-query to insert values into the table
- *
- * @param values list of values to insert
- *
- * @return created sql-query
- */
-const std::string
-SqlDatabase::createInsertQuery(const std::vector<std::string> &values)
-{
-    std::string command  = "INSERT INTO ";
-    command.append(m_tableName);
-    command.append("(");
-
-    // create fields
-    for(uint32_t i = 0; i < m_tableHeader.size(); i++)
-    {
-        const DbHeaderEntry* entry = &m_tableHeader[i];
-        if(i != 0) {
-            command.append(" , ");
-        }
-        command.append(entry->name);
-    }
-
-    // create values
-    command.append(") VALUES (");
-    for(uint32_t i = 0; i < m_tableHeader.size(); i++)
-    {
-        if(i != 0) {
-            command.append(" , ");
-        }
-        command.append("'");
-        command.append(values.at(i));
-        command.append("'");
-    }
-
-    command.append(" );");
-
-    return command;
-}
-
-/**
- * @brief SqlDatabase::createDeleteQuery
- * @param colName
- * @param compare
+ * @brief Users::initDatabase
+ * @param path
+ * @param errorMessag
  * @return
  */
-const std::string
-SqlDatabase::createDeleteQuery(const std::string &colName,
-                               const std::string &compare)
+bool
+SqlDatabase::initDatabase(const std::string &path,
+                          Kitsunemimi::ErrorContainer &error)
 {
-    std::string command  = "DELETE FROM ";
-    command.append(m_tableName);
-    command.append(" WHERE ");
-    command.append(colName);
-    command.append("='");
-    command.append(compare);
-    command.append("';");
+    std::lock_guard<std::mutex> guard(m_lock);
+    if(m_isOpen)
+    {
+        error.errorMessage = "database not open";
+        LOG_ERROR(error);
+        return false;
+    }
 
-    return command;
+    if(m_db.initDB(path, error))
+    {
+        m_isOpen = true;
+        m_path = path;
+
+        return true;
+    }
+
+    return false;
 }
 
-} // namespace Sakura
-} // namespace Kitsunemimi
+/**
+ * @brief Users::closeDatabase
+ * @return
+ */
+bool
+SqlDatabase::closeDatabase()
+{
+    std::lock_guard<std::mutex> guard(m_lock);
+    if(m_isOpen == false) {
+        return true;
+    }
+
+    if(m_db.closeDB())
+    {
+        m_isOpen = false;
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * @brief SqlDatabase::execSqlCommand
+ * @param resultTable
+ * @param command
+ * @param error
+ * @return
+ */
+bool
+SqlDatabase::execSqlCommand(TableItem* resultTable,
+                            const std::string &command,
+                            ErrorContainer &error)
+{
+    std::lock_guard<std::mutex> guard(m_lock);
+    if(m_isOpen == false)
+    {
+        error.errorMessage = "database not open";
+        LOG_ERROR(error);
+        return false;
+    }
+
+    return m_db.execSqlCommand(resultTable, command, error);
+}
+
+}
+}

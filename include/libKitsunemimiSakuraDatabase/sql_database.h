@@ -20,16 +20,17 @@
  *      limitations under the License.
  */
 
-#ifndef KITSUNEMIMI_SAKURA_DATABASE_SQL_DATABASE_H
-#define KITSUNEMIMI_SAKURA_DATABASE_SQL_DATABASE_H
+#ifndef SQLDATABASE_H
+#define SQLDATABASE_H
 
-#include <vector>
-#include <string>
-
-#include <libKitsunemimiCommon/common_items/data_items.h>
+#include <mutex>
+#include <libKitsunemimiSqlite/sqlite.h>
 
 namespace Kitsunemimi
 {
+namespace Sqlite {
+class Sqlite;
+}
 namespace Sakura
 {
 
@@ -37,37 +38,26 @@ class SqlDatabase
 {
 public:
     SqlDatabase();
-    virtual ~SqlDatabase();
 
-protected:
-    enum DbVataValueTypes
-    {
-        STRING_TYPE = 0,
-        INT_TYPE = 1,
-        BOOL_TYPE = 2,
-    };
 
-    struct DbHeaderEntry
-    {
-        std::string name = "";
-        int maxLength = -1;
-        DbVataValueTypes type = STRING_TYPE;
-        bool isPrimary = false;
-        bool allowNull = false;
-    };
+    bool initDatabase(const std::string &path,
+                      Kitsunemimi::ErrorContainer &error);
+    bool closeDatabase();
 
-    std::vector<DbHeaderEntry> m_tableHeader;
-    std::string m_tableName = "";
 
-    const std::string createTableCreateQuery();
-    const std::string createSelectQuery(const std::string &colName,
-                                        const std::string &compare);
-    const std::string createInsertQuery(const std::vector<std::string> &values);
-    const std::string createDeleteQuery(const std::string &colName,
-                                        const std::string &compare);
+    bool execSqlCommand(TableItem* resultTable,
+                        const std::string &command,
+                        ErrorContainer &error);
+
+private:
+    std::mutex m_lock;
+    bool m_isOpen = false;
+    std::string m_path = "";
+
+    Kitsunemimi::Sqlite::Sqlite m_db;
 };
 
-} // namespace Sakura
-} // namespace Kitsunemimi
+}
+}
 
-#endif // KITSUNEMIMI_SAKURA_DATABASE_SQL_DATABASE_H
+#endif // SQLDATABASE_H
