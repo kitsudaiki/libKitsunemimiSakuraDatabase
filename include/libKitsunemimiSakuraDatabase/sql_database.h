@@ -63,6 +63,8 @@ protected:
     const std::string createSelectQuery(const std::string &colName,
                                         const std::string &compare);
     const std::string createInsertQuery(const std::vector<std::string> &values);
+    const std::string createDeleteQuery(const std::string &colName,
+                                        const std::string &compare);
 };
 
 } // namespace Sakura

@@ -162,5 +162,26 @@ SqlDatabase::createInsertQuery(const std::vector<std::string> &values)
     return command;
 }
 
+/**
+ * @brief SqlDatabase::createDeleteQuery
+ * @param colName
+ * @param compare
+ * @return
+ */
+const std::string
+SqlDatabase::createDeleteQuery(const std::string &colName,
+                               const std::string &compare)
+{
+    std::string command  = "DELETE FROM ";
+    command.append(m_tableName);
+    command.append(" WHERE ");
+    command.append(colName);
+    command.append("='");
+    command.append(compare);
+    command.append("';");
+
+    return command;
+}
+
 } // namespace Sakura
 } // namespace Kitsunemimi
