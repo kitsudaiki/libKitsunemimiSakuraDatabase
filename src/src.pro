@@ -15,7 +15,7 @@ LIBS += -L../../libKitsunemimiCommon/src/debug -lKitsunemimiCommon
 LIBS += -L../../libKitsunemimiCommon/src/release -lKitsunemimiCommon
 INCLUDEPATH += ../../libKitsunemimiCommon/include
 
-LIBS += -lsqlite3
+LIBS += -lsqlite3 -luuid
 
 INCLUDEPATH += $$PWD \
                $$PWD/../include

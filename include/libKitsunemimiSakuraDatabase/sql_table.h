@@ -25,6 +25,7 @@
 
 #include <vector>
 #include <string>
+#include <uuid/uuid.h>
 
 #include <libKitsunemimiCommon/common_items/data_items.h>
 #include <libKitsunemimiCommon/logger.h>
@@ -64,12 +65,19 @@ protected:
 
     bool initTable(Kitsunemimi::ErrorContainer &error);
 
-    bool insertToDb(const std::vector<std::string> &values,
-                    ErrorContainer &error);
+    const std::string insertToDb(const std::vector<std::string> &values,
+                                 ErrorContainer &error);
+    bool getAllFromDb(TableItem* resultTable,
+                      ErrorContainer &error);
+    bool getFromDb(TableItem* resultTable,
+                   std::string uuid,
+                   ErrorContainer &error);
     bool getFromDb(TableItem* resultTable,
                    const std::string &colName,
                    const std::string &compare,
                    ErrorContainer &error);
+    bool deleteFromDb(std::string uuid,
+                      ErrorContainer &error);
     bool deleteFromDb(const std::string &colName,
                       const std::string &compare,
                       ErrorContainer &error);
@@ -79,7 +87,8 @@ private:
     const std::string createTableCreateQuery();
     const std::string createSelectQuery(const std::string &colName,
                                         const std::string &compare);
-    const std::string createInsertQuery(const std::vector<std::string> &values);
+    const std::string createInsertQuery(const std::string &uuid,
+                                        const std::vector<std::string> &values);
     const std::string createDeleteQuery(const std::string &colName,
                                         const std::string &compare);
 };

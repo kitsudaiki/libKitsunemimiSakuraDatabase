@@ -22,6 +22,9 @@
 
 #include <libKitsunemimiSakuraDatabase/sql_table.h>
 #include <libKitsunemimiSakuraDatabase/sql_database.h>
+#include <libKitsunemimiCommon/common_methods/string_methods.h>
+
+#include <uuid/uuid.h>
 
 namespace Kitsunemimi
 {
@@ -34,6 +37,12 @@ namespace Sakura
 SqlTable::SqlTable(SqlDatabase* db)
 {
     m_db = db;
+
+    DbHeaderEntry userId;
+    userId.name = "uuid";
+    userId.maxLength = UUID_STR_LEN;
+    userId.isPrimary = true;
+    m_tableHeader.push_back(userId);
 }
 
 /**
@@ -58,17 +67,57 @@ SqlTable::initTable(ErrorContainer &error)
  * @param error
  * @return
  */
-bool
+const std::string
 SqlTable::insertToDb(const std::vector<std::string> &values,
-                       ErrorContainer &error)
+                     ErrorContainer &error)
 {
     Kitsunemimi::TableItem resultItem;
-    const bool ret = m_db->execSqlCommand(&resultItem, createInsertQuery(values), error);
+
+    // create uuid
+    char uuid[UUID_STR_LEN];
+    uuid_t binaryUuid;
+    uuid_generate_random(binaryUuid);
+    uuid_unparse_lower(binaryUuid, uuid);
+    std::string uuidString = std::string(uuid, UUID_STR_LEN);
+    Kitsunemimi::toLowerCase(uuidString);
+
+    const bool ret = m_db->execSqlCommand(&resultItem,
+                                          createInsertQuery(uuidString, values),
+                                          error);
     if(ret == false) {
-        return false;
+        return "";
     }
 
-    return true;
+    return uuidString;
+}
+
+/**
+ * @brief SqlTable::getAllFromDb
+ * @param resultTable
+ * @param error
+ * @return
+ */
+bool
+SqlTable::getAllFromDb(TableItem *resultTable,
+                       ErrorContainer &error)
+{
+    return m_db->execSqlCommand(resultTable, createSelectQuery("", ""), error);
+}
+
+/**
+ * @brief SqlTable::getFromDb
+ * @param resultTable
+ * @param uuid
+ * @param error
+ * @return
+ */
+bool
+SqlTable::getFromDb(TableItem *resultTable,
+                    std::string uuid,
+                    ErrorContainer &error)
+{
+    Kitsunemimi::toLowerCase(uuid);
+    return getFromDb(resultTable, "uuid", uuid, error);
 }
 
 /**
@@ -86,6 +135,19 @@ SqlTable::getFromDb(TableItem* resultTable,
                     ErrorContainer &error)
 {
     return m_db->execSqlCommand(resultTable, createSelectQuery(colName, compare), error);
+}
+
+/**
+ * @brief SqlTable::deleteFromDb
+ * @param uuid
+ * @param error
+ * @return
+ */
+bool
+SqlTable::deleteFromDb(std::string uuid, ErrorContainer &error)
+{
+    Kitsunemimi::toLowerCase(uuid);
+    return deleteFromDb("uuid", uuid, error);
 }
 
 /**
@@ -173,7 +235,7 @@ SqlTable::createTableCreateQuery()
  */
 const std::string
 SqlTable::createSelectQuery(const std::string &colName,
-                               const std::string &compare)
+                            const std::string &compare)
 {
     std::string command = "SELECT * from " + m_tableName;
     if(colName != "")
@@ -196,29 +258,32 @@ SqlTable::createSelectQuery(const std::string &colName,
  * @return created sql-query
  */
 const std::string
-SqlTable::createInsertQuery(const std::vector<std::string> &values)
+SqlTable::createInsertQuery(const std::string &uuid,
+                            const std::vector<std::string> &values)
 {
     std::string command  = "INSERT INTO ";
     command.append(m_tableName);
     command.append("(");
+    command.append("( uuid ");
 
     // create fields
     for(uint32_t i = 0; i < m_tableHeader.size(); i++)
     {
         const DbHeaderEntry* entry = &m_tableHeader[i];
-        if(i != 0) {
-            command.append(" , ");
-        }
+        command.append(" , ");
         command.append(entry->name);
     }
 
     // create values
     command.append(") VALUES (");
+
+    command.append("'");
+    command.append(uuid);
+    command.append("'");
+
     for(uint32_t i = 0; i < m_tableHeader.size(); i++)
     {
-        if(i != 0) {
-            command.append(" , ");
-        }
+        command.append(" , ");
         command.append("'");
         command.append(values.at(i));
         command.append("'");
