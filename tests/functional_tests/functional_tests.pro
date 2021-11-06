@@ -23,7 +23,9 @@ INCLUDEPATH += $$PWD
 
 SOURCES += \
     main.cpp  \
-    users_test.cpp
+    sql_table_test.cpp \
+    test_table.cpp
 
 HEADERS += \
-    users_test.h
+    sql_table_test.h \
+    test_table.h

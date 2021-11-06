@@ -42,6 +42,8 @@ public:
     SqlTable(SqlDatabase* db);
     virtual ~SqlTable();
 
+    bool initTable(ErrorContainer &error);
+
 protected:
     enum DbVataValueTypes
     {
@@ -61,9 +63,6 @@ protected:
 
     std::vector<DbHeaderEntry> m_tableHeader;
     std::string m_tableName = "";
-
-
-    bool initTable(Kitsunemimi::ErrorContainer &error);
 
     const std::string insertToDb(const std::vector<std::string> &values,
                                  ErrorContainer &error);

@@ -14,7 +14,7 @@ build:
     - ./build.sh test
     - mkdir upload
     - cp -r ../result/* upload/
-    - cp ../build/libKitsunemimiHanamiPersistence/tests/unit_tests/unit_tests upload/
+    - cp ../build/libKitsunemimiHanamiPersistence/tests/functional_tests/functional_tests upload/
   artifacts:
     paths:
       - upload
@@ -28,7 +28,7 @@ tests:
     - ls -l
     - apt-get update
     - apt-get install -y  libsqlite3-dev uuid-dev
-    - upload/unit_tests
+    - upload/functional_tests
   dependencies:
     - build
   tags:

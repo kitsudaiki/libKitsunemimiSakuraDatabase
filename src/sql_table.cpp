@@ -78,7 +78,9 @@ SqlTable::insertToDb(const std::vector<std::string> &values,
     uuid_t binaryUuid;
     uuid_generate_random(binaryUuid);
     uuid_unparse_lower(binaryUuid, uuid);
-    std::string uuidString = std::string(uuid, UUID_STR_LEN);
+
+    // fill into string, but must be reduced by 1 to remove the escate-character
+    std::string uuidString = std::string(uuid, UUID_STR_LEN - 1);
     Kitsunemimi::toLowerCase(uuidString);
 
     const bool ret = m_db->execSqlCommand(&resultItem,
@@ -264,10 +266,10 @@ SqlTable::createInsertQuery(const std::string &uuid,
     std::string command  = "INSERT INTO ";
     command.append(m_tableName);
     command.append("(");
-    command.append("( uuid ");
+    command.append("uuid ");
 
     // create fields
-    for(uint32_t i = 0; i < m_tableHeader.size(); i++)
+    for(uint32_t i = 1; i < m_tableHeader.size(); i++)
     {
         const DbHeaderEntry* entry = &m_tableHeader[i];
         command.append(" , ");
@@ -281,7 +283,7 @@ SqlTable::createInsertQuery(const std::string &uuid,
     command.append(uuid);
     command.append("'");
 
-    for(uint32_t i = 0; i < m_tableHeader.size(); i++)
+    for(uint32_t i = 0; i < m_tableHeader.size() - 1; i++)
     {
         command.append(" , ");
         command.append("'");
@@ -302,7 +304,7 @@ SqlTable::createInsertQuery(const std::string &uuid,
  */
 const std::string
 SqlTable::createDeleteQuery(const std::string &colName,
-                               const std::string &compare)
+                            const std::string &compare)
 {
     std::string command  = "DELETE FROM ";
     command.append(m_tableName);

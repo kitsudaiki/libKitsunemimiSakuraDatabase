@@ -102,6 +102,8 @@ SqlDatabase::execSqlCommand(TableItem* resultTable,
         return false;
     }
 
+    LOG_DEBUG("run SQL-command: " + command);
+
     return m_db.execSqlCommand(resultTable, command, error);
 }
 
