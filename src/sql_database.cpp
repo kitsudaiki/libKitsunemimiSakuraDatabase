@@ -27,29 +27,41 @@ namespace Kitsunemimi
 namespace Sakura
 {
 
-SqlDatabase::SqlDatabase()
-{
+/**
+ * @brief constructor
+ */
+SqlDatabase::SqlDatabase() {}
 
+/**
+ * @brief destructor
+ */
+SqlDatabase::~SqlDatabase()
+{
+    closeDatabase();
 }
 
 /**
- * @brief Users::initDatabase
- * @param path
- * @param errorMessag
- * @return
+ * @brief initialize sqlite-database
+ *
+ * @param path file-path to sqlite-database
+ * @param error reference for error-output
+ *
+ * @return true, if successfull, else false
  */
 bool
 SqlDatabase::initDatabase(const std::string &path,
                           Kitsunemimi::ErrorContainer &error)
 {
     std::lock_guard<std::mutex> guard(m_lock);
+
+    // check if database is already open
     if(m_isOpen)
     {
-        error.errorMessage = "database not open";
-        LOG_ERROR(error);
-        return false;
+        LOG_DEBUG("Database already open");
+        return true;
     }
 
+    // init database
     if(m_db.initDB(path, error))
     {
         m_isOpen = true;
@@ -62,17 +74,21 @@ SqlDatabase::initDatabase(const std::string &path,
 }
 
 /**
- * @brief Users::closeDatabase
- * @return
+ * @brief close database-connectiono
+ *
+ * @return true, if successfull, else false
  */
 bool
 SqlDatabase::closeDatabase()
 {
     std::lock_guard<std::mutex> guard(m_lock);
+
+    // check if already closed
     if(m_isOpen == false) {
         return true;
     }
 
+    // close
     if(m_db.closeDB())
     {
         m_isOpen = false;
@@ -83,11 +99,13 @@ SqlDatabase::closeDatabase()
 }
 
 /**
- * @brief SqlDatabase::execSqlCommand
- * @param resultTable
- * @param command
- * @param error
- * @return
+ * @brief execute sql-query
+ *
+ * @param resultTable table-pointer for the result of the query
+ * @param command queuy to execute
+ * @param error reference for error-output
+ *
+ * @return true, if successfull, else false
  */
 bool
 SqlDatabase::execSqlCommand(TableItem* resultTable,
@@ -95,9 +113,10 @@ SqlDatabase::execSqlCommand(TableItem* resultTable,
                             ErrorContainer &error)
 {
     std::lock_guard<std::mutex> guard(m_lock);
+
     if(m_isOpen == false)
     {
-        error.errorMessage = "database not open";
+        error.addMeesage("database not open");
         LOG_ERROR(error);
         return false;
     }
@@ -107,5 +126,5 @@ SqlDatabase::execSqlCommand(TableItem* resultTable,
     return m_db.execSqlCommand(resultTable, command, error);
 }
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi

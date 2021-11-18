@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef SQLDATABASE_H
-#define SQLDATABASE_H
+#ifndef KITSUNEMIMI_SAKURA_DATABASE_SQLDATABASE_H
+#define KITSUNEMIMI_SAKURA_DATABASE_SQLDATABASE_H
 
 #include <mutex>
 #include <libKitsunemimiSqlite/sqlite.h>
@@ -38,7 +38,7 @@ class SqlDatabase
 {
 public:
     SqlDatabase();
-
+    ~SqlDatabase();
 
     bool initDatabase(const std::string &path,
                       Kitsunemimi::ErrorContainer &error);
@@ -57,7 +57,7 @@ private:
     Kitsunemimi::Sqlite::Sqlite m_db;
 };
 
-}
-}
+} // namespace Sakura
+} // namespace Kitsunemimi
 
-#endif // SQLDATABASE_H
+#endif // KITSUNEMIMI_SAKURA_DATABASE_SQLDATABASE_H

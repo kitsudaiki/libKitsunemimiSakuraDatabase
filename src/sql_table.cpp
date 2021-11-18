@@ -1,5 +1,5 @@
-﻿/**
- * @file       sql_database.cpp
+/**
+ * @file       sql_table.cpp
  *
  * @author     Tobias Anker <tobias.anker@kitsunemimi.moe>
  *
@@ -33,6 +33,8 @@ namespace Sakura
 
 /**
  * @brief constructor
+ *
+ * @param db pointer to database
  */
 SqlTable::SqlTable(SqlDatabase* db)
 {
@@ -51,9 +53,11 @@ SqlTable::SqlTable(SqlDatabase* db)
 SqlTable::~SqlTable() {}
 
 /**
- * @brief SqlTable::initTable
- * @param error
- * @return
+ * @brief initalize table
+ *
+ * @param error reference for error-output
+ *
+ * @return true, if successfuly or table already exist, else false
  */
 bool
 SqlTable::initTable(ErrorContainer &error)
@@ -62,10 +66,12 @@ SqlTable::initTable(ErrorContainer &error)
 }
 
 /**
- * @brief SqlTable::insertValues
- * @param values
- * @param error
- * @return
+ * @brief insert values into the table
+ *
+ * @param values string-list with values to insert
+ * @param error reference for error-output
+ *
+ * @return uuid of the new entry, if successfull, else empty string
  */
 const std::string
 SqlTable::insertToDb(const std::vector<std::string> &values,
@@ -94,10 +100,12 @@ SqlTable::insertToDb(const std::vector<std::string> &values,
 }
 
 /**
- * @brief SqlTable::getAllFromDb
- * @param resultTable
- * @param error
- * @return
+ * @brief get all rows from table
+ *
+ * @param resultTable pointer to table for the resuld of the query
+ * @param error reference for error-output
+ *
+ * @return true, if successfull, else false
  */
 bool
 SqlTable::getAllFromDb(TableItem *resultTable,
@@ -107,11 +115,13 @@ SqlTable::getAllFromDb(TableItem *resultTable,
 }
 
 /**
- * @brief SqlTable::getFromDb
- * @param resultTable
- * @param uuid
- * @param error
- * @return
+ * @brief get single row from table
+ *
+ * @param resultTable pointer to table for the resuld of the query
+ * @param uuid uuid of the row to get
+ * @param error reference for error-output
+ *
+ * @return true, if successfull, else false
  */
 bool
 SqlTable::getFromDb(TableItem *resultTable,
@@ -123,12 +133,14 @@ SqlTable::getFromDb(TableItem *resultTable,
 }
 
 /**
- * @brief SqlTable::getValues
- * @param resultTable
- * @param colName
- * @param compare
- * @param error
- * @return
+ * @brief get one or more rows from table
+ *
+ * @param resultTable pointer to table for the resuld of the query
+ * @param colName name of the column to compare
+ * @param compare value for comparism
+ * @param error reference for error-output
+ *
+ * @return true, if successfull, else false
  */
 bool
 SqlTable::getFromDb(TableItem* resultTable,
@@ -140,10 +152,12 @@ SqlTable::getFromDb(TableItem* resultTable,
 }
 
 /**
- * @brief SqlTable::deleteFromDb
- * @param uuid
- * @param error
- * @return
+ * @brief delete row from database
+ *
+ * @param uuid uuid of the row to delete
+ * @param error reference for error-output
+ *
+ * @return true, if successfull, else false
  */
 bool
 SqlTable::deleteFromDb(std::string uuid, ErrorContainer &error)
@@ -153,11 +167,13 @@ SqlTable::deleteFromDb(std::string uuid, ErrorContainer &error)
 }
 
 /**
- * @brief SqlTable::deleteValues
- * @param colName
- * @param compare
- * @param error
- * @return
+ * @brief delete one of more rows from database
+ *
+ * @param colName name of the column to compare
+ * @param compare value for comparism
+ * @param error reference for error-output
+ *
+ * @return true, if successfull, else false
  */
 bool
 SqlTable::deleteFromDb(const std::string &colName,
@@ -231,6 +247,7 @@ SqlTable::createTableCreateQuery()
 /**
  * @brief create a sql-query to get a line from the table
  *
+ * @param colName name of the column to compare
  * @param compare value to compare against the first comlumn
  *
  * @return created sql-query
@@ -246,8 +263,8 @@ SqlTable::createSelectQuery(const std::string &colName,
         command.append(colName);
         command.append("='");
         command.append(compare);
-        command.append("';");
     }
+    command.append("';");
 
     return command;
 }
@@ -297,10 +314,12 @@ SqlTable::createInsertQuery(const std::string &uuid,
 }
 
 /**
- * @brief SqlDatabase::createDeleteQuery
- * @param colName
- * @param compare
- * @return
+ * @brief create query to delete rows from table
+ *
+ * @param colName name of the column to compare
+ * @param compare value for comparism
+ *
+ * @return created sql-query
  */
 const std::string
 SqlTable::createDeleteQuery(const std::string &colName,

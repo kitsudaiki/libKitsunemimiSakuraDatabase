@@ -1,5 +1,5 @@
 /**
- * @file       sql_database.h
+ * @file       sql_table.h
  *
  * @author     Tobias Anker <tobias.anker@kitsunemimi.moe>
  *
