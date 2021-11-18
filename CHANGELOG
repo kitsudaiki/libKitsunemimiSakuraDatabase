@@ -1,2 +1,18 @@
 # Changelog
 
+## [0.2.0] - 2021-11-19
+
+### Added
+- functional-tests
+- automatic uuid-generation
+- delete-queries
+
+### Changed
+- complete restructure to not only build the queries but also execute them
+- use error-container of libKitsunemimiCommon for error-output
+
+
+## [0.1.0] - 2021-10.28
+
+### Added
+- initial version to build sql-queries

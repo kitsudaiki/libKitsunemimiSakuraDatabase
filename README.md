@@ -20,6 +20,7 @@ g++ | g++ | >= 8.0 | Compiler for the C++ code.
 make | make | >= 4.0 | process the make-file, which is created by qmake to build the programm with g++
 qmake | qt5-qmake | >= 5.0 | This package provides the tool qmake, which is similar to cmake and create the make-file for compilation.
 sqlite3 library | libsqlite3-dev | >= 3.0 | handling of sqlite databases
+uuid | uuid-dev | >= 2.30 | generate uuid's
 
 Installation on Ubuntu/Debian:
 
@@ -33,8 +34,8 @@ IMPORTANT: All my projects are only tested on Linux.
 
 Repository-Name | Version-Tag | Download-Path
 --- | --- | ---
-libKitsunemimiCommon | v0.22.0 |  https://github.com/kitsudaiki/libKitsunemimiCommon.git
-libKitsunemimiSqlite | v0.1.0 | -
+libKitsunemimiCommon | v0.23.0 |  https://github.com/kitsudaiki/libKitsunemimiCommon.git
+libKitsunemimiSqlite | v0.2.0 | -
 
 HINT: These Kitsunemimi-Libraries will be downloaded and build automatically with the build-script below.
 
