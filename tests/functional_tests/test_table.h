@@ -26,7 +26,8 @@ public:
 
     const std::string addUser(const UserData &data,
                               ErrorContainer &error);
-    bool getUser(TableItem &resultItem, const std::string &userID,
+    bool getUser(TableItem &resultItem,
+                 const std::string &userID,
                  ErrorContainer &error);
     bool getAllUser(TableItem &resultItem,
                     ErrorContainer &error);

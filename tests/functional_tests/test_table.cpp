@@ -61,7 +61,9 @@ TestTable::getUser(TableItem &resultItem,
                    const std::string &userID,
                    ErrorContainer &error)
 {
-    return getFromDb(&resultItem, userID, error);
+    std::vector<RequestCondition> conditions;
+    conditions.emplace_back("uuid", userID);
+    return getFromDb(&resultItem, conditions, error);
 }
 
 /**
@@ -86,7 +88,9 @@ bool
 TestTable::deleteUser(const std::string &userID,
                       ErrorContainer &error)
 {
-    return deleteFromDb(userID, error);
+    std::vector<RequestCondition> conditions;
+    conditions.emplace_back("uuid", userID);
+    return deleteFromDb(conditions, error);
 }
 
 }
