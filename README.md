@@ -25,7 +25,7 @@ uuid | uuid-dev | >= 2.30 | generate uuid's
 Installation on Ubuntu/Debian:
 
 ```bash
-sudo apt-get install g++ make qt5-qmake libsqlite3-dev
+sudo apt-get install g++ make qt5-qmake libsqlite3-dev uuid-dev
 ```
 
 IMPORTANT: All my projects are only tested on Linux.

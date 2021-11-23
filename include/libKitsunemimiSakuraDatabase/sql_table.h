@@ -61,6 +61,19 @@ protected:
         bool allowNull = false;
     };
 
+    struct RequestCondition
+    {
+        std::string colName;
+        std::string value;
+
+        RequestCondition(const std::string &colName,
+                         const std::string &value)
+        {
+            this->colName = colName;
+            this->value = value;
+        }
+    };
+
     std::vector<DbHeaderEntry> m_tableHeader;
     std::string m_tableName = "";
 
@@ -69,27 +82,19 @@ protected:
     bool getAllFromDb(TableItem* resultTable,
                       ErrorContainer &error);
     bool getFromDb(TableItem* resultTable,
-                   std::string uuid,
+                   const std::vector<RequestCondition> &conditions,
                    ErrorContainer &error);
-    bool getFromDb(TableItem* resultTable,
-                   const std::string &colName,
-                   const std::string &compare,
-                   ErrorContainer &error);
-    bool deleteFromDb(std::string uuid,
-                      ErrorContainer &error);
-    bool deleteFromDb(const std::string &colName,
-                      const std::string &compare,
+    bool deleteAllFromDb(ErrorContainer &error);
+    bool deleteFromDb(const std::vector<RequestCondition> &conditions,
                       ErrorContainer &error);
 private:
     SqlDatabase* m_db = nullptr;
 
     const std::string createTableCreateQuery();
-    const std::string createSelectQuery(const std::string &colName,
-                                        const std::string &compare);
+    const std::string createSelectQuery(const std::vector<RequestCondition> &conditions);
     const std::string createInsertQuery(const std::string &uuid,
                                         const std::vector<std::string> &values);
-    const std::string createDeleteQuery(const std::string &colName,
-                                        const std::string &compare);
+    const std::string createDeleteQuery(const std::vector<RequestCondition> &conditions);
 };
 
 } // namespace Sakura

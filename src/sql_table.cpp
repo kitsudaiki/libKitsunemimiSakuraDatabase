@@ -108,80 +108,71 @@ SqlTable::insertToDb(const std::vector<std::string> &values,
  * @return true, if successfull, else false
  */
 bool
-SqlTable::getAllFromDb(TableItem *resultTable,
+SqlTable::getAllFromDb(TableItem* resultTable,
                        ErrorContainer &error)
 {
-    return m_db->execSqlCommand(resultTable, createSelectQuery("", ""), error);
-}
-
-/**
- * @brief get single row from table
- *
- * @param resultTable pointer to table for the resuld of the query
- * @param uuid uuid of the row to get
- * @param error reference for error-output
- *
- * @return true, if successfull, else false
- */
-bool
-SqlTable::getFromDb(TableItem *resultTable,
-                    std::string uuid,
-                    ErrorContainer &error)
-{
-    Kitsunemimi::toLowerCase(uuid);
-    return getFromDb(resultTable, "uuid", uuid, error);
+    const std::vector<RequestCondition> conditions;
+    return m_db->execSqlCommand(resultTable, createSelectQuery(conditions), error);
 }
 
 /**
  * @brief get one or more rows from table
  *
  * @param resultTable pointer to table for the resuld of the query
- * @param colName name of the column to compare
- * @param compare value for comparism
+ * @param conditions conditions to filter table
  * @param error reference for error-output
  *
  * @return true, if successfull, else false
  */
 bool
 SqlTable::getFromDb(TableItem* resultTable,
-                    const std::string &colName,
-                    const std::string &compare,
+                    const std::vector<RequestCondition> &conditions,
                     ErrorContainer &error)
 {
-    return m_db->execSqlCommand(resultTable, createSelectQuery(colName, compare), error);
+    if(conditions.size() == 0)
+    {
+        error.addMeesage("no conditions given for table-access.");
+        return false;
+    }
+
+    return m_db->execSqlCommand(resultTable, createSelectQuery(conditions), error);
 }
 
 /**
- * @brief delete row from database
+ * @brief delete all entries for the table
  *
- * @param uuid uuid of the row to delete
  * @param error reference for error-output
  *
  * @return true, if successfull, else false
  */
 bool
-SqlTable::deleteFromDb(std::string uuid, ErrorContainer &error)
+SqlTable::deleteAllFromDb(ErrorContainer &error)
 {
-    Kitsunemimi::toLowerCase(uuid);
-    return deleteFromDb("uuid", uuid, error);
+    const std::vector<RequestCondition> conditions;
+    Kitsunemimi::TableItem resultItem;
+    return m_db->execSqlCommand(&resultItem, createDeleteQuery(conditions), error);
 }
 
 /**
  * @brief delete one of more rows from database
  *
- * @param colName name of the column to compare
- * @param compare value for comparism
+ * @param conditions conditions to filter table
  * @param error reference for error-output
  *
  * @return true, if successfull, else false
  */
 bool
-SqlTable::deleteFromDb(const std::string &colName,
-                       const std::string &compare,
+SqlTable::deleteFromDb(const std::vector<RequestCondition> &conditions,
                        ErrorContainer &error)
 {
+    if(conditions.size() == 0)
+    {
+        error.addMeesage("no conditions given for table-access.");
+        return false;
+    }
+
     Kitsunemimi::TableItem resultItem;
-    return m_db->execSqlCommand(&resultItem, createDeleteQuery(colName, compare), error);
+    return m_db->execSqlCommand(&resultItem, createDeleteQuery(conditions), error);
 }
 
 /**
@@ -253,18 +244,26 @@ SqlTable::createTableCreateQuery()
  * @return created sql-query
  */
 const std::string
-SqlTable::createSelectQuery(const std::string &colName,
-                            const std::string &compare)
+SqlTable::createSelectQuery(const std::vector<RequestCondition> &conditions)
 {
     std::string command = "SELECT * from " + m_tableName;
-    if(colName != "")
+    if(conditions.size() > 0)
     {
         command.append(" WHERE ");
-        command.append(colName);
-        command.append("='");
-        command.append(compare);
+
+        for(uint32_t i = 0; i < conditions.size(); i++)
+        {
+            if(i > 0) {
+                command.append(" AND ");
+            }
+            const RequestCondition* condition = &conditions.at(i);
+            command.append(condition->colName);
+            command.append("='");
+            command.append(condition->value);
+            command.append("' ");
+        }
     }
-    command.append("';");
+    command.append(" ;");
 
     return command;
 }
@@ -322,16 +321,28 @@ SqlTable::createInsertQuery(const std::string &uuid,
  * @return created sql-query
  */
 const std::string
-SqlTable::createDeleteQuery(const std::string &colName,
-                            const std::string &compare)
+SqlTable::createDeleteQuery(const std::vector<RequestCondition> &conditions)
 {
     std::string command  = "DELETE FROM ";
     command.append(m_tableName);
-    command.append(" WHERE ");
-    command.append(colName);
-    command.append("='");
-    command.append(compare);
-    command.append("';");
+
+    if(conditions.size() > 0)
+    {
+        command.append(" WHERE ");
+
+        for(uint32_t i = 0; i < conditions.size(); i++)
+        {
+            if(i > 0) {
+                command.append(" AND ");
+            }
+            const RequestCondition* condition = &conditions.at(i);
+            command.append(condition->colName);
+            command.append("='");
+            command.append(condition->value);
+            command.append("' ");
+        }
+    }
+    command.append(" ;");
 
     return command;
 }
