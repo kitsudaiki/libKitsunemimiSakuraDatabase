@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.0] - 2021-11-26
+
+### Added
+- addional condition-variable-list to have more control over the requested data
+
+
 ## [0.2.0] - 2021-11-19
 
 ### Added
