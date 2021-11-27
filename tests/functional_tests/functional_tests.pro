@@ -12,6 +12,11 @@ LIBS += -L../../../libKitsunemimiSqlite/src/debug -lKitsunemimiSqlite
 LIBS += -L../../../libKitsunemimiSqlite/src/release -lKitsunemimiSqlite
 INCLUDEPATH += ../../../libKitsunemimiSqlite/include
 
+LIBS += -L../../../libKitsunemimiJson/src -lKitsunemimiJson
+LIBS += -L../../../libKitsunemimiJson/src/debug -lKitsunemimiJson
+LIBS += -L../../../libKitsunemimiJson/src/release -lKitsunemimiJson
+INCLUDEPATH += ../../../libKitsunemimiJson/include
+
 LIBS += -L../../../libKitsunemimiCommon/src -lKitsunemimiCommon
 LIBS += -L../../../libKitsunemimiCommon/src/debug -lKitsunemimiCommon
 LIBS += -L../../../libKitsunemimiCommon/src/release -lKitsunemimiCommon

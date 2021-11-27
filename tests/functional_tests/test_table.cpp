@@ -21,6 +21,7 @@ TestTable::TestTable(Kitsunemimi::Sakura::SqlDatabase* db)
     DbHeaderEntry pwHash;
     pwHash.name = "pw_hash";
     pwHash.maxLength = 64;
+    pwHash.hide = true;
     m_tableHeader.push_back(pwHash);
 
     DbHeaderEntry isAdmin;
@@ -40,14 +41,11 @@ TestTable::~TestTable()
  * @param errorMessage
  * @return
  */
-const std::string
-TestTable::addUser(const UserData &data,
+bool
+TestTable::addUser(Kitsunemimi::Json::JsonItem &data,
                    ErrorContainer &error)
 {
-    const std::vector<std::string> values = { data.userName,
-                                              data.pwHash,
-                                              std::to_string(data.isAdmin)};
-    return insertToDb(values, error);
+    return insertToDb(data, error);
 }
 
 /**
@@ -57,13 +55,14 @@ TestTable::addUser(const UserData &data,
  * @return
  */
 bool
-TestTable::getUser(TableItem &resultItem,
+TestTable::getUser(Kitsunemimi::Json::JsonItem &resultItem,
                    const std::string &userID,
-                   ErrorContainer &error)
+                   ErrorContainer &error,
+                   const bool withHideValues)
 {
     std::vector<RequestCondition> conditions;
-    conditions.emplace_back("uuid", userID);
-    return getFromDb(&resultItem, conditions, error);
+    conditions.emplace_back("user_name", userID);
+    return getFromDb(resultItem, conditions, error, withHideValues);
 }
 
 /**
@@ -73,9 +72,10 @@ TestTable::getUser(TableItem &resultItem,
  */
 bool
 TestTable::getAllUser(TableItem &resultItem,
-                      ErrorContainer &error)
+                      ErrorContainer &error,
+                      const bool showHiddenValues)
 {
-    return getAllFromDb(&resultItem, error);
+    return getAllFromDb(resultItem, error, showHiddenValues);
 }
 
 /**
@@ -89,7 +89,7 @@ TestTable::deleteUser(const std::string &userID,
                       ErrorContainer &error)
 {
     std::vector<RequestCondition> conditions;
-    conditions.emplace_back("uuid", userID);
+    conditions.emplace_back("user_name", userID);
     return deleteFromDb(conditions, error);
 }
 
