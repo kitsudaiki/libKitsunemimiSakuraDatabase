@@ -166,7 +166,10 @@ SqlTable::getFromDb(Json::JsonItem &result,
     }
 
     // convert table-row to json
-    if(processGetResult(result, tableResult) == false) {
+    if(processGetResult(result, tableResult) == false)
+    {
+        error.addMeesage("no entry found.");
+        LOG_ERROR(error);
         return false;
     }
 
