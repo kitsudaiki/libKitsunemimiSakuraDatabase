@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file       sql_table.cpp
  *
  * @author     Tobias Anker <tobias.anker@kitsunemimi.moe>
@@ -22,9 +22,9 @@
 
 #include <libKitsunemimiSakuraDatabase/sql_table.h>
 #include <libKitsunemimiSakuraDatabase/sql_database.h>
-#include <libKitsunemimiCommon/common_methods/string_methods.h>
 
-#include <uuid/uuid.h>
+#include <libKitsunemimiCommon/common_methods/string_methods.h>
+#include <libKitsunemimiJson/json_item.h>
 
 namespace Kitsunemimi
 {
@@ -39,12 +39,6 @@ namespace Sakura
 SqlTable::SqlTable(SqlDatabase* db)
 {
     m_db = db;
-
-    DbHeaderEntry userId;
-    userId.name = "uuid";
-    userId.maxLength = UUID_STR_LEN;
-    userId.isPrimary = true;
-    m_tableHeader.push_back(userId);
 }
 
 /**
@@ -73,30 +67,35 @@ SqlTable::initTable(ErrorContainer &error)
  *
  * @return uuid of the new entry, if successfull, else empty string
  */
-const std::string
-SqlTable::insertToDb(const std::vector<std::string> &values,
+bool
+SqlTable::insertToDb(Json::JsonItem &values,
                      ErrorContainer &error)
 {
     Kitsunemimi::TableItem resultItem;
 
-    // create uuid
-    char uuid[UUID_STR_LEN];
-    uuid_t binaryUuid;
-    uuid_generate_random(binaryUuid);
-    uuid_unparse_lower(binaryUuid, uuid);
-
-    // fill into string, but must be reduced by 1 to remove the escate-character
-    std::string uuidString = std::string(uuid, UUID_STR_LEN - 1);
-    Kitsunemimi::toLowerCase(uuidString);
-
-    const bool ret = m_db->execSqlCommand(&resultItem,
-                                          createInsertQuery(uuidString, values),
-                                          error);
-    if(ret == false) {
-        return "";
+    // get values from input
+    std::vector<std::string> dbValues;
+    for(const DbHeaderEntry &entry : m_tableHeader)
+    {
+        if(values.contains(entry.name) == false
+                && entry.allowNull == false)
+        {
+            error.addMeesage("insert into dabase failed, because '" + entry.name + "' is required,"
+                             " but missing in the input-values.");
+            LOG_ERROR(error);
+            return false;
+        }
+        dbValues.push_back(values.get(entry.name).toString());
     }
 
-    return uuidString;
+    // build and run insert-command
+    if(m_db->execSqlCommand(&resultItem, createInsertQuery(dbValues), error) == false)
+    {
+        LOG_ERROR(error);
+        return false;
+    }
+
+    return true;
 }
 
 /**
@@ -104,15 +103,34 @@ SqlTable::insertToDb(const std::vector<std::string> &values,
  *
  * @param resultTable pointer to table for the resuld of the query
  * @param error reference for error-output
+ * @param showHiddenValues include values in output, which should normally be hidden
  *
  * @return true, if successfull, else false
  */
 bool
-SqlTable::getAllFromDb(TableItem* resultTable,
-                       ErrorContainer &error)
+SqlTable::getAllFromDb(TableItem &resultTable,
+                       ErrorContainer &error,
+                       const bool showHiddenValues)
 {
     const std::vector<RequestCondition> conditions;
-    return m_db->execSqlCommand(resultTable, createSelectQuery(conditions), error);
+    if(m_db->execSqlCommand(&resultTable, createSelectQuery(conditions), error) == false)
+    {
+        LOG_ERROR(error);
+        return false;
+    }
+
+    // remove all values, which should be hide
+    if(showHiddenValues == false)
+    {
+        for(const DbHeaderEntry &entry : m_tableHeader)
+        {
+            if(entry.hide) {
+                resultTable.deleteColumn(entry.name);
+            }
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -121,21 +139,49 @@ SqlTable::getAllFromDb(TableItem* resultTable,
  * @param resultTable pointer to table for the resuld of the query
  * @param conditions conditions to filter table
  * @param error reference for error-output
+ * @param showHiddenValues include values in output, which should normally be hidden
  *
  * @return true, if successfull, else false
  */
 bool
-SqlTable::getFromDb(TableItem* resultTable,
+SqlTable::getFromDb(Json::JsonItem &result,
                     const std::vector<RequestCondition> &conditions,
-                    ErrorContainer &error)
+                    ErrorContainer &error,
+                    const bool showHiddenValues)
 {
+    // precheck
     if(conditions.size() == 0)
     {
         error.addMeesage("no conditions given for table-access.");
+        LOG_ERROR(error);
         return false;
     }
 
-    return m_db->execSqlCommand(resultTable, createSelectQuery(conditions), error);
+    // run select-query
+    TableItem tableResult;
+    if(m_db->execSqlCommand(&tableResult, createSelectQuery(conditions), error) == false)
+    {
+        LOG_ERROR(error);
+        return false;
+    }
+
+    // convert table-row to json
+    if(processGetResult(result, tableResult) == false) {
+        return false;
+    }
+
+    // remove all values, which should be hide
+    if(showHiddenValues == false)
+    {
+        for(const DbHeaderEntry &entry : m_tableHeader)
+        {
+            if(entry.hide) {
+                result.remove(entry.name);
+            }
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -165,9 +211,11 @@ bool
 SqlTable::deleteFromDb(const std::vector<RequestCondition> &conditions,
                        ErrorContainer &error)
 {
+    // precheck
     if(conditions.size() == 0)
     {
         error.addMeesage("no conditions given for table-access.");
+        LOG_ERROR(error);
         return false;
     }
 
@@ -276,32 +324,30 @@ SqlTable::createSelectQuery(const std::vector<RequestCondition> &conditions)
  * @return created sql-query
  */
 const std::string
-SqlTable::createInsertQuery(const std::string &uuid,
-                            const std::vector<std::string> &values)
+SqlTable::createInsertQuery(const std::vector<std::string> &values)
 {
     std::string command  = "INSERT INTO ";
     command.append(m_tableName);
     command.append("(");
-    command.append("uuid ");
 
     // create fields
-    for(uint32_t i = 1; i < m_tableHeader.size(); i++)
+    for(uint32_t i = 0; i < m_tableHeader.size(); i++)
     {
         const DbHeaderEntry* entry = &m_tableHeader[i];
-        command.append(" , ");
+        if(i != 0) {
+            command.append(" , ");
+        }
         command.append(entry->name);
     }
 
     // create values
     command.append(") VALUES (");
 
-    command.append("'");
-    command.append(uuid);
-    command.append("'");
-
-    for(uint32_t i = 0; i < m_tableHeader.size() - 1; i++)
+    for(uint32_t i = 0; i < m_tableHeader.size(); i++)
     {
-        command.append(" , ");
+        if(i != 0) {
+            command.append(" , ");
+        }
         command.append("'");
         command.append(values.at(i));
         command.append("'");
@@ -345,6 +391,32 @@ SqlTable::createDeleteQuery(const std::vector<RequestCondition> &conditions)
     command.append(" ;");
 
     return command;
+}
+
+/**
+ * @brief convert first row together with header into json
+ *
+ * @param result reference for json-formated output
+ * @param tableContent table-input with at least one row
+ *
+ * @return false, if table is empty, else true
+ */
+bool
+SqlTable::processGetResult(Json::JsonItem &result,
+                           TableItem &tableContent)
+{
+    if(tableContent.getNumberOfRows() == 0) {
+        return false;
+    }
+
+    // prepare result
+    const Kitsunemimi::DataItem* firstRow = tableContent.getBody()->get(0);
+
+    for(uint32_t i = 0; i < m_tableHeader.size(); i++) {
+        result.insert(m_tableHeader.at(i).name, firstRow->get(i));
+    }
+
+    return true;
 }
 
 } // namespace Sakura

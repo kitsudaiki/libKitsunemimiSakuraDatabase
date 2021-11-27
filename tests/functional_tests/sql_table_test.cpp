@@ -3,6 +3,8 @@
 #include <libKitsunemimiSakuraDatabase/sql_database.h>
 #include <libKitsunemimiSakuraDatabase/sql_table.h>
 
+#include <libKitsunemimiJson/json_item.h>
+
 #include <test_table.h>
 
 namespace Kitsunemimi
@@ -62,21 +64,23 @@ SqlTable_Test::initTable_test()
 void
 SqlTable_Test::create_test()
 {
-    TestTable::UserData testData;
     ErrorContainer error;
 
-    testData.userName = "user0815";
-    testData.pwHash = "secret";
-    testData.isAdmin = true;
+    Kitsunemimi::Json::JsonItem testData;
+    testData.insert("user_name", "user0815");
+    testData.insert("pw_hash", "secret");
+    testData.insert("is_admin", true);
 
-    m_uuid = m_table->addUser(testData, error);
-    TEST_NOT_EQUAL(m_uuid.size(), 0);
+    m_uuid = "user0815";
+    TEST_EQUAL(m_table->addUser(testData, error), true);
 
-    testData.userName = "another user";
-    testData.pwHash = "secret2";
-    testData.isAdmin = false;
 
-    m_table->addUser(testData, error);
+    Kitsunemimi::Json::JsonItem testData2;
+    testData2.insert("user_name", "another user");
+    testData2.insert("pw_hash", "secret2");
+    testData2.insert("is_admin", false);
+
+    m_table->addUser(testData2, error);
 }
 
 /**
@@ -85,12 +89,10 @@ SqlTable_Test::create_test()
 void
 SqlTable_Test::get_test()
 {
-    TableItem result;
+    Kitsunemimi::Json::JsonItem resultItem;
     ErrorContainer error;
 
-    TEST_EQUAL(m_table->getUser(result, m_uuid, error), true);
-    TEST_EQUAL(result.getNumberOfRows(), 1);
-    TEST_EQUAL(result.getNumberOfColums(), 4);
+    TEST_EQUAL(m_table->getUser(resultItem, m_uuid, error), true);
 }
 
 /**
@@ -104,7 +106,12 @@ SqlTable_Test::getAll_test()
 
     TEST_EQUAL(m_table->getAllUser(result, error), true);
     TEST_EQUAL(result.getNumberOfRows(), 2);
-    TEST_EQUAL(result.getNumberOfColums(), 4);
+    TEST_EQUAL(result.getNumberOfColums(), 2);
+
+    result.clearTable();
+    TEST_EQUAL(m_table->getAllUser(result, error, true), true);
+    TEST_EQUAL(result.getNumberOfRows(), 2);
+    TEST_EQUAL(result.getNumberOfColums(), 3);
 }
 
 /**

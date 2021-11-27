@@ -16,21 +16,15 @@ public:
     TestTable(Kitsunemimi::Sakura::SqlDatabase* db);
     ~TestTable();
 
-    struct UserData
-    {
-        std::string userId = "";
-        std::string userName = "";
-        std::string pwHash = "";
-        bool isAdmin = false;
-    };
-
-    const std::string addUser(const UserData &data,
-                              ErrorContainer &error);
-    bool getUser(TableItem &resultItem,
-                 const std::string &userID,
+    bool addUser(Json::JsonItem &data,
                  ErrorContainer &error);
+    bool getUser(Json::JsonItem &resultItem,
+                 const std::string &userID,
+                 ErrorContainer &error,
+                 const bool showHiddenValues = false);
     bool getAllUser(TableItem &resultItem,
-                    ErrorContainer &error);
+                    ErrorContainer &error,
+                    const bool showHiddenValues = false);
     bool deleteUser(const std::string &userID,
                     ErrorContainer &error);
 };

@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef KITSUNEMIMI_SAKURA_DATABASE_SQLDATABASE_H
-#define KITSUNEMIMI_SAKURA_DATABASE_SQLDATABASE_H
+#ifndef KITSUNEMIMI_SAKURA_DATABASE_SQL_DATABASE_H
+#define KITSUNEMIMI_SAKURA_DATABASE_SQL_DATABASE_H
 
 #include <mutex>
 #include <libKitsunemimiSqlite/sqlite.h>
@@ -60,4 +60,4 @@ private:
 } // namespace Sakura
 } // namespace Kitsunemimi
 
-#endif // KITSUNEMIMI_SAKURA_DATABASE_SQLDATABASE_H
+#endif // KITSUNEMIMI_SAKURA_DATABASE_SQL_DATABASE_H

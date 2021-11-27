@@ -20,8 +20,8 @@
  *      limitations under the License.
  */
 
-#ifndef KITSUNEMIMI_SAKURA_DATABASE_SQL_DATABASE_H
-#define KITSUNEMIMI_SAKURA_DATABASE_SQL_DATABASE_H
+#ifndef KITSUNEMIMI_SAKURA_DATABASE_SQL_TABLE_H
+#define KITSUNEMIMI_SAKURA_DATABASE_SQL_TABLE_H
 
 #include <vector>
 #include <string>
@@ -29,6 +29,12 @@
 
 #include <libKitsunemimiCommon/common_items/data_items.h>
 #include <libKitsunemimiCommon/logger.h>
+
+namespace Kitsunemimi {
+namespace Json {
+class JsonItem;
+}
+}
 
 namespace Kitsunemimi
 {
@@ -59,6 +65,7 @@ protected:
         DbVataValueTypes type = STRING_TYPE;
         bool isPrimary = false;
         bool allowNull = false;
+        bool hide = false;
     };
 
     struct RequestCondition
@@ -77,13 +84,15 @@ protected:
     std::vector<DbHeaderEntry> m_tableHeader;
     std::string m_tableName = "";
 
-    const std::string insertToDb(const std::vector<std::string> &values,
-                                 ErrorContainer &error);
-    bool getAllFromDb(TableItem* resultTable,
-                      ErrorContainer &error);
-    bool getFromDb(TableItem* resultTable,
+    bool insertToDb(Json::JsonItem &values,
+                    ErrorContainer &error);
+    bool getAllFromDb(TableItem &resultTable,
+                      ErrorContainer &error,
+                      const bool showHiddenValues = false);
+    bool getFromDb(Json::JsonItem &result,
                    const std::vector<RequestCondition> &conditions,
-                   ErrorContainer &error);
+                   ErrorContainer &error,
+                   const bool showHiddenValues = false);
     bool deleteAllFromDb(ErrorContainer &error);
     bool deleteFromDb(const std::vector<RequestCondition> &conditions,
                       ErrorContainer &error);
@@ -92,12 +101,14 @@ private:
 
     const std::string createTableCreateQuery();
     const std::string createSelectQuery(const std::vector<RequestCondition> &conditions);
-    const std::string createInsertQuery(const std::string &uuid,
-                                        const std::vector<std::string> &values);
+    const std::string createInsertQuery(const std::vector<std::string> &values);
     const std::string createDeleteQuery(const std::vector<RequestCondition> &conditions);
+
+    bool processGetResult(Kitsunemimi::Json::JsonItem &result,
+                          Kitsunemimi::TableItem &tableContent);
 };
 
 } // namespace Sakura
 } // namespace Kitsunemimi
 
-#endif // KITSUNEMIMI_SAKURA_DATABASE_SQL_DATABASE_H
+#endif // KITSUNEMIMI_SAKURA_DATABASE_SQL_TABLE_H
