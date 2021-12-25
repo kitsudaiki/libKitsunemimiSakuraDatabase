@@ -56,6 +56,7 @@ protected:
         STRING_TYPE = 0,
         INT_TYPE = 1,
         BOOL_TYPE = 2,
+        FLOAT_TYPE = 3
     };
 
     struct DbHeaderEntry

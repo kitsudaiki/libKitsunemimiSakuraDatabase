@@ -168,8 +168,10 @@ SqlTable::getFromDb(Json::JsonItem &result,
     // convert table-row to json
     if(processGetResult(result, tableResult) == false)
     {
-        error.addMeesage("no entry found.");
-        LOG_ERROR(error);
+        error.addMeesage("no entry found found in database-table '" + m_tableName + "'.");
+        // HINT: no LOG_ERROR here, because it is possible, that the getFromDb was only called to
+        // check if the entry exist within the database. In this case a false as return is a valid
+        // output and not an error
         return false;
     }
 
@@ -267,6 +269,9 @@ SqlTable::createTableCreateQuery()
                 break;
             case BOOL_TYPE:
                 command.append("bool ");
+                break;
+            case FLOAT_TYPE:
+                command.append("real ");
                 break;
         }
 
