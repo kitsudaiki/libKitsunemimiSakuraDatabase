@@ -34,8 +34,8 @@ IMPORTANT: All my projects are only tested on Linux.
 
 Repository-Name | Version-Tag | Download-Path
 --- | --- | ---
-libKitsunemimiCommon | v0.24.0 |  https://github.com/kitsudaiki/libKitsunemimiCommon.git
-libKitsunemimiSqlite | v0.2.0 | -
+libKitsunemimiCommon | v0.25.0 |  https://github.com/kitsudaiki/libKitsunemimiCommon.git
+libKitsunemimiSqlite | v0.3.0 | -
 
 HINT: These Kitsunemimi-Libraries will be downloaded and build automatically with the build-script below.
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.0] - 2021-12-30
+
+### Added
+- float-type for columns
+- marker for values, which should be hidden per default
+
+### Changed
+- reworked interface for better handling
+
+### Fixed
+- error-output for get-requests
+
+
 ## [0.3.0] - 2021-11-26
 
 ### Added
