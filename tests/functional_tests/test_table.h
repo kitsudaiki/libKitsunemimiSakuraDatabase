@@ -18,6 +18,10 @@ public:
 
     bool addUser(Json::JsonItem &data,
                  ErrorContainer &error);
+    bool getUser(TableItem &resultTable,
+                 const std::string &userID,
+                 ErrorContainer &error,
+                 const bool withHideValues = false);
     bool getUser(Json::JsonItem &resultItem,
                  const std::string &userID,
                  ErrorContainer &error,
@@ -26,8 +30,7 @@ public:
                     ErrorContainer &error,
                     const bool showHiddenValues = false);
     bool deleteUser(const std::string &userID,
-                    ErrorContainer &error);
-};
+                    ErrorContainer &error);};
 
 }
 }
