@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.1] - 2022-01-15
+
+### Added
+- new getter for tables, which use table-item instead of json-item
+
+
 ## [0.4.0] - 2021-12-30
 
 ### Added
