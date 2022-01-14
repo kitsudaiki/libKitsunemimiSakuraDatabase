@@ -46,7 +46,7 @@ SqlDatabase::~SqlDatabase()
  * @param path file-path to sqlite-database
  * @param error reference for error-output
  *
- * @return true, if successfull, else false
+ * @return true, if successful, else false
  */
 bool
 SqlDatabase::initDatabase(const std::string &path,
@@ -76,7 +76,7 @@ SqlDatabase::initDatabase(const std::string &path,
 /**
  * @brief close database-connectiono
  *
- * @return true, if successfull, else false
+ * @return true, if successful, else false
  */
 bool
 SqlDatabase::closeDatabase()
@@ -105,7 +105,7 @@ SqlDatabase::closeDatabase()
  * @param command queuy to execute
  * @param error reference for error-output
  *
- * @return true, if successfull, else false
+ * @return true, if successful, else false
  */
 bool
 SqlDatabase::execSqlCommand(TableItem* resultTable,

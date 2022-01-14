@@ -90,6 +90,10 @@ protected:
     bool getAllFromDb(TableItem &resultTable,
                       ErrorContainer &error,
                       const bool showHiddenValues = false);
+    bool getFromDb(TableItem &resultTable,
+                   const std::vector<RequestCondition> &conditions,
+                   ErrorContainer &error,
+                   const bool showHiddenValues = false);
     bool getFromDb(Json::JsonItem &result,
                    const std::vector<RequestCondition> &conditions,
                    ErrorContainer &error,

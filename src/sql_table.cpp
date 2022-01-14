@@ -65,7 +65,7 @@ SqlTable::initTable(ErrorContainer &error)
  * @param values string-list with values to insert
  * @param error reference for error-output
  *
- * @return uuid of the new entry, if successfull, else empty string
+ * @return uuid of the new entry, if successful, else empty string
  */
 bool
 SqlTable::insertToDb(Json::JsonItem &values,
@@ -105,14 +105,14 @@ SqlTable::insertToDb(Json::JsonItem &values,
  * @param error reference for error-output
  * @param showHiddenValues include values in output, which should normally be hidden
  *
- * @return true, if successfull, else false
+ * @return true, if successful, else false
  */
 bool
 SqlTable::getAllFromDb(TableItem &resultTable,
                        ErrorContainer &error,
                        const bool showHiddenValues)
 {
-    const std::vector<RequestCondition> conditions;
+    std::vector<RequestCondition> conditions;
     if(m_db->execSqlCommand(&resultTable, createSelectQuery(conditions), error) == false)
     {
         LOG_ERROR(error);
@@ -133,6 +133,44 @@ SqlTable::getAllFromDb(TableItem &resultTable,
     return true;
 }
 
+
+/**
+ * @brief get one or more rows from table or also the complete table
+ *
+ * @param resultTable pointer to table for the resuld of the query
+ * @param conditions conditions to filter table
+ * @param error reference for error-output
+ * @param showHiddenValues include values in output, which should normally be hidden
+ *
+ * @return true, if successful, else false
+ */
+bool
+SqlTable::getFromDb(TableItem &resultTable,
+                    const std::vector<RequestCondition> &conditions,
+                    ErrorContainer &error,
+                    const bool showHiddenValues)
+{
+    if(m_db->execSqlCommand(&resultTable, createSelectQuery(conditions), error) == false)
+    {
+        LOG_ERROR(error);
+        return false;
+    }
+
+    // remove all values, which should be hide
+    if(showHiddenValues == false)
+    {
+        for(const DbHeaderEntry &entry : m_tableHeader)
+        {
+            if(entry.hide) {
+                resultTable.deleteColumn(entry.name);
+            }
+        }
+    }
+
+    return true;
+}
+
+
 /**
  * @brief get one or more rows from table
  *
@@ -141,7 +179,7 @@ SqlTable::getAllFromDb(TableItem &resultTable,
  * @param error reference for error-output
  * @param showHiddenValues include values in output, which should normally be hidden
  *
- * @return true, if successfull, else false
+ * @return true, if successful, else false
  */
 bool
 SqlTable::getFromDb(Json::JsonItem &result,
@@ -194,7 +232,7 @@ SqlTable::getFromDb(Json::JsonItem &result,
  *
  * @param error reference for error-output
  *
- * @return true, if successfull, else false
+ * @return true, if successful, else false
  */
 bool
 SqlTable::deleteAllFromDb(ErrorContainer &error)
@@ -210,7 +248,7 @@ SqlTable::deleteAllFromDb(ErrorContainer &error)
  * @param conditions conditions to filter table
  * @param error reference for error-output
  *
- * @return true, if successfull, else false
+ * @return true, if successful, else false
  */
 bool
 SqlTable::deleteFromDb(const std::vector<RequestCondition> &conditions,
@@ -294,8 +332,7 @@ SqlTable::createTableCreateQuery()
 /**
  * @brief create a sql-query to get a line from the table
  *
- * @param colName name of the column to compare
- * @param compare value to compare against the first comlumn
+ * @param conditions conditions to filter table
  *
  * @return created sql-query
  */
@@ -369,8 +406,7 @@ SqlTable::createInsertQuery(const std::vector<std::string> &values)
 /**
  * @brief create query to delete rows from table
  *
- * @param colName name of the column to compare
- * @param compare value for comparism
+ * @param conditions conditions to filter table
  *
  * @return created sql-query
  */

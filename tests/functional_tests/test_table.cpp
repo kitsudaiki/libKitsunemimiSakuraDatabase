@@ -14,7 +14,7 @@ TestTable::TestTable(Kitsunemimi::Sakura::SqlDatabase* db)
     m_tableName = "users";
 
     DbHeaderEntry userName;
-    userName.name = "user_name";
+    userName.name = "name";
     userName.maxLength = 256;
     m_tableHeader.push_back(userName);
 
@@ -30,16 +30,10 @@ TestTable::TestTable(Kitsunemimi::Sakura::SqlDatabase* db)
     m_tableHeader.push_back(isAdmin);
 }
 
-TestTable::~TestTable()
-{
-
-}
+TestTable::~TestTable() {}
 
 /**
- * @brief Users::addUser
- * @param data
- * @param errorMessage
- * @return
+ * @brief addUser
  */
 bool
 TestTable::addUser(Kitsunemimi::Json::JsonItem &data,
@@ -49,10 +43,21 @@ TestTable::addUser(Kitsunemimi::Json::JsonItem &data,
 }
 
 /**
- * @brief UsersDatabase::getUser
- * @param userID
- * @param error
- * @return
+ * @brief getUser
+ */
+bool
+TestTable::getUser(TableItem &resultTable,
+                   const std::string &userID,
+                   ErrorContainer &error,
+                   const bool withHideValues)
+{
+    std::vector<RequestCondition> conditions;
+    conditions.emplace_back("name", userID);
+    return getFromDb(resultTable, conditions, error, withHideValues);
+}
+
+/**
+ * @brief getUser
  */
 bool
 TestTable::getUser(Kitsunemimi::Json::JsonItem &resultItem,
@@ -61,14 +66,12 @@ TestTable::getUser(Kitsunemimi::Json::JsonItem &resultItem,
                    const bool withHideValues)
 {
     std::vector<RequestCondition> conditions;
-    conditions.emplace_back("user_name", userID);
+    conditions.emplace_back("name", userID);
     return getFromDb(resultItem, conditions, error, withHideValues);
 }
 
 /**
- * @brief UsersDatabase::getAllUser
- * @param error
- * @return
+ * @brief getAllUser
  */
 bool
 TestTable::getAllUser(TableItem &resultItem,
@@ -79,17 +82,14 @@ TestTable::getAllUser(TableItem &resultItem,
 }
 
 /**
- * @brief UsersDatabase::deleteUser
- * @param userID
- * @param error
- * @return
+ * @brief deleteUser
  */
 bool
 TestTable::deleteUser(const std::string &userID,
                       ErrorContainer &error)
 {
     std::vector<RequestCondition> conditions;
-    conditions.emplace_back("user_name", userID);
+    conditions.emplace_back("name", userID);
     return deleteFromDb(conditions, error);
 }
 

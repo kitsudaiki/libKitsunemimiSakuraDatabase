@@ -67,7 +67,7 @@ SqlTable_Test::create_test()
     ErrorContainer error;
 
     Kitsunemimi::Json::JsonItem testData;
-    testData.insert("user_name", "user0815");
+    testData.insert("name", "user0815");
     testData.insert("pw_hash", "secret");
     testData.insert("is_admin", true);
 
@@ -76,7 +76,7 @@ SqlTable_Test::create_test()
 
 
     Kitsunemimi::Json::JsonItem testData2;
-    testData2.insert("user_name", "another user");
+    testData2.insert("name", "another user");
     testData2.insert("pw_hash", "secret2");
     testData2.insert("is_admin", false);
 
@@ -90,9 +90,19 @@ void
 SqlTable_Test::get_test()
 {
     Kitsunemimi::Json::JsonItem resultItem;
+    TableItem resultTable;
     ErrorContainer error;
 
     TEST_EQUAL(m_table->getUser(resultItem, m_uuid, error), true);
+    TEST_EQUAL(resultItem.toString(), std::string("{\"is_admin\":true,\"name\":\"user0815\"}"));
+
+    TEST_EQUAL(m_table->getUser(resultTable, m_uuid, error), true);
+    std::string compare = "+----------+----------+\n"
+                          "| name     | is_admin |\n"
+                          "+==========+==========+\n"
+                          "| user0815 | true     |\n"
+                          "+----------+----------+\n";
+    TEST_EQUAL(resultTable.toString(), compare);
 }
 
 /**
