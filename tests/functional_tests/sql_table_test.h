@@ -30,6 +30,7 @@ private:
     void create_test();
     void get_test();
     void getAll_test();
+    void update_test();
     void delete_test();
 };
 

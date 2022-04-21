@@ -87,6 +87,9 @@ protected:
 
     bool insertToDb(Json::JsonItem &values,
                     ErrorContainer &error);
+    bool updateInDb(const std::vector<RequestCondition> &conditions,
+                    const Json::JsonItem &updates,
+                    ErrorContainer &error);
     bool getAllFromDb(TableItem &resultTable,
                       ErrorContainer &error,
                       const bool showHiddenValues = false);
@@ -106,6 +109,8 @@ private:
 
     const std::string createTableCreateQuery();
     const std::string createSelectQuery(const std::vector<RequestCondition> &conditions);
+    const std::string createUpdateQuery(const std::vector<RequestCondition> &conditions,
+                                        const Json::JsonItem &updates);
     const std::string createInsertQuery(const std::vector<std::string> &values);
     const std::string createDeleteQuery(const std::vector<RequestCondition> &conditions);
 

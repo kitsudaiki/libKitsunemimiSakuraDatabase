@@ -99,6 +99,32 @@ SqlTable::insertToDb(Json::JsonItem &values,
 }
 
 /**
+ * @brief update values within the table
+ *
+ * @param conditions conditions to filter table
+ * @param updates json-map with key-value pairs to update
+ * @param error reference for error-output
+ *
+ * @return true, if successful, else false
+ */
+bool
+SqlTable::updateInDb(const std::vector<RequestCondition> &conditions,
+                     const Json::JsonItem &updates,
+                     ErrorContainer &error)
+{
+    // precheck
+    if(conditions.size() == 0)
+    {
+        error.addMeesage("no conditions given for table-access.");
+        LOG_ERROR(error);
+        return false;
+    }
+
+    Kitsunemimi::TableItem resultItem;
+    return m_db->execSqlCommand(&resultItem, createUpdateQuery(conditions, updates), error);
+}
+
+/**
  * @brief get all rows from table
  *
  * @param resultTable pointer to table for the resuld of the query
@@ -340,6 +366,56 @@ const std::string
 SqlTable::createSelectQuery(const std::vector<RequestCondition> &conditions)
 {
     std::string command = "SELECT * from " + m_tableName;
+    if(conditions.size() > 0)
+    {
+        command.append(" WHERE ");
+
+        for(uint32_t i = 0; i < conditions.size(); i++)
+        {
+            if(i > 0) {
+                command.append(" AND ");
+            }
+            const RequestCondition* condition = &conditions.at(i);
+            command.append(condition->colName);
+            command.append("='");
+            command.append(condition->value);
+            command.append("' ");
+        }
+    }
+    command.append(" ;");
+
+    return command;
+}
+
+/**
+ * @brief create a sql-query to update values within the table
+ *
+ * @param conditions conditions to filter table
+ * @param updates json-map with key-value pairs to update
+ *
+ * @return created sql-query
+ */
+const std::string
+SqlTable::createUpdateQuery(const std::vector<RequestCondition> &conditions,
+                            const Kitsunemimi::Json::JsonItem &updates)
+{
+    std::string command  = "UPDATE ";
+    command.append(m_tableName);
+
+    // add set-section
+    command.append(" SET ");
+    const std::vector<std::string> keys = updates.getKeys();
+    for(uint32_t i = 0; i < keys.size(); i++)
+    {
+        if(i > 0) {
+            command.append(" , ");
+        }
+        command.append(keys.at(i));
+        Kitsunemimi::Json::JsonItem val = updates.get(keys.at(i));
+        command.append("='" + val.toString() + "' ");
+    }
+
+    // add where-section
     if(conditions.size() > 0)
     {
         command.append(" WHERE ");
