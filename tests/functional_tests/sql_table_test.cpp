@@ -23,6 +23,7 @@ SqlTable_Test::SqlTable_Test()
     create_test();
     get_test();
     getAll_test();
+    update_test();
     delete_test();
 }
 
@@ -122,6 +123,27 @@ SqlTable_Test::getAll_test()
     TEST_EQUAL(m_table->getAllUser(result, error, true), true);
     TEST_EQUAL(result.getNumberOfRows(), 2);
     TEST_EQUAL(result.getNumberOfColums(), 3);
+}
+
+/**
+ * @brief update_test
+ */
+void
+SqlTable_Test::update_test()
+{
+    ErrorContainer error;
+
+    Kitsunemimi::Json::JsonItem updateDate;
+    updateDate.insert("pw_hash", "secret2");
+    updateDate.insert("is_admin", false);
+    TEST_EQUAL(m_table->updateUser("user0815", updateDate, error), true);
+
+    Kitsunemimi::Json::JsonItem resultItem;
+    TableItem resultTable;
+
+    TEST_EQUAL(m_table->getUser(resultItem, m_uuid, error, true), true);
+    TEST_EQUAL(resultItem.toString(),
+               std::string("{\"is_admin\":false,\"name\":\"user0815\",\"pw_hash\":\"secret2\"}"));
 }
 
 /**

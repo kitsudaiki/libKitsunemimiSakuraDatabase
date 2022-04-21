@@ -71,6 +71,19 @@ TestTable::getUser(Kitsunemimi::Json::JsonItem &resultItem,
 }
 
 /**
+ * @brief updateUser
+ */
+bool
+TestTable::updateUser(const std::string &userID,
+                      const Kitsunemimi::Json::JsonItem &values,
+                      ErrorContainer &error)
+{
+    std::vector<RequestCondition> conditions;
+    conditions.emplace_back("name", userID);
+    return updateInDb(conditions, values, error);
+}
+
+/**
  * @brief getAllUser
  */
 bool

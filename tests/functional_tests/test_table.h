@@ -30,7 +30,11 @@ public:
                     ErrorContainer &error,
                     const bool showHiddenValues = false);
     bool deleteUser(const std::string &userID,
-                    ErrorContainer &error);};
+                    ErrorContainer &error);
+    bool updateUser(const std::string &userID,
+                    const Kitsunemimi::Json::JsonItem &values,
+                    ErrorContainer &error);
+};
 
 }
 }
