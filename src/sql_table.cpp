@@ -23,7 +23,7 @@
 #include <libKitsunemimiSakuraDatabase/sql_table.h>
 #include <libKitsunemimiSakuraDatabase/sql_database.h>
 
-#include <libKitsunemimiCommon/common_methods/string_methods.h>
+#include <libKitsunemimiCommon/methods/string_methods.h>
 #include <libKitsunemimiJson/json_item.h>
 
 namespace Kitsunemimi
