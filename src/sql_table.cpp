@@ -145,6 +145,14 @@ SqlTable::getAllFromDb(TableItem &resultTable,
         return false;
     }
 
+    // if header is missing in result, because there are no entries to list, add a default-header
+    if(resultTable.getNumberOfColums() == 0)
+    {
+        for(const DbHeaderEntry &entry : m_tableHeader) {
+            resultTable.addColumn(entry.name);
+        }
+    }
+
     // remove all values, which should be hide
     if(showHiddenValues == false)
     {
@@ -180,6 +188,14 @@ SqlTable::getFromDb(TableItem &resultTable,
     {
         LOG_ERROR(error);
         return false;
+    }
+
+    // if header is missing in result, because there are no entries to list, add a default-header
+    if(resultTable.getNumberOfColums() == 0)
+    {
+        for(const DbHeaderEntry &entry : m_tableHeader) {
+            resultTable.addColumn(entry.name);
+        }
     }
 
     // remove all values, which should be hide
