@@ -20,7 +20,8 @@ private:
     std::string m_filePath = "";
     TestTable* m_table = nullptr;
     SqlDatabase* m_db = nullptr;
-    std::string m_uuid = "";
+    std::string m_name1 = "user0815";
+    std::string m_name2 = "other";
 
     void deleteFile();
     void initTest();
