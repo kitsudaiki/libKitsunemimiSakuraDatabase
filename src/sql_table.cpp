@@ -73,15 +73,16 @@ SqlTable::insertToDb(Json::JsonItem &values,
 {
     Kitsunemimi::TableItem resultItem;
 
-    // get values from input
+    // get values from input to check if all required values are set
     std::vector<std::string> dbValues;
     for(const DbHeaderEntry &entry : m_tableHeader)
     {
         if(values.contains(entry.name) == false
                 && entry.allowNull == false)
         {
-            error.addMeesage("insert into dabase failed, because '" + entry.name + "' is required,"
-                             " but missing in the input-values.");
+            error.addMeesage("insert into dabase failed, because '"
+                             + entry.name
+                             + "' is required, but missing in the input-values.");
             LOG_ERROR(error);
             return false;
         }
