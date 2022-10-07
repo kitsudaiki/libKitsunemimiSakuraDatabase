@@ -3,7 +3,7 @@ QT -= qt core gui
 TARGET = KitsunemimiSakuraDatabase
 TEMPLATE = lib
 CONFIG += c++17
-VERSION = 0.6.0
+VERSION = 0.6.1
 
 LIBS += -L../../libKitsunemimiSqlite/src -lKitsunemimiSqlite
 LIBS += -L../../libKitsunemimiSqlite/src/debug -lKitsunemimiSqlite
