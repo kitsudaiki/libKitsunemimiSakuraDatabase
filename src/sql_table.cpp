@@ -250,9 +250,9 @@ SqlTable::getFromDb(Json::JsonItem &result,
     if(processGetResult(result, tableResult) == false)
     {
         error.addMeesage("no entry found in database-table '" + m_tableName + "'.");
-        // HINT: no LOG_ERROR here, because it is possible, that the getFromDb was only called to
-        // check if the entry exist within the database. In this case a false as return is a valid
-        // output and not an error
+        // HINT(kitsudaiki): no LOG_ERROR here, because it is possible, that the getFromDb was only
+        // called to check if the entry exist within the database. In this case a false as return
+        // is a valid output and not an error
         return false;
     }
 

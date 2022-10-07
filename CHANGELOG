@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.0] - 2022-10-07
+
+### Changed
+- updated dependencies
+
+### Fixed
+- generate a default-header in case the database-request has empty result
+
+
 ## [0.5.0] - 2022-06-27
 
 ### Added
