@@ -98,11 +98,15 @@ protected:
     bool getFromDb(TableItem &resultTable,
                    const std::vector<RequestCondition> &conditions,
                    ErrorContainer &error,
-                   const bool showHiddenValues = false);
+                   const bool showHiddenValues = false,
+                   const uint64_t positionOffset = 0,
+                   const uint64_t numberOfRows = 0);
     bool getFromDb(Json::JsonItem &result,
                    const std::vector<RequestCondition> &conditions,
                    ErrorContainer &error,
-                   const bool showHiddenValues = false);
+                   const bool showHiddenValues = false,
+                   const uint64_t positionOffset = 0,
+                   const uint64_t numberOfRows = 0);
     long getNumberOfRows(ErrorContainer &error);
     bool deleteAllFromDb(ErrorContainer &error);
     bool deleteFromDb(const std::vector<RequestCondition> &conditions,
