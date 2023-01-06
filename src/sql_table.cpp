@@ -144,7 +144,11 @@ SqlTable::getAllFromDb(TableItem &resultTable,
                        const uint64_t numberOfRows)
 {
     std::vector<RequestCondition> conditions;
-    if(m_db->execSqlCommand(&resultTable, createSelectQuery(conditions, positionOffset, numberOfRows), error) == false)
+    if(m_db->execSqlCommand(&resultTable,
+                            createSelectQuery(conditions,
+                                              positionOffset,
+                                              numberOfRows),
+                            error) == false)
     {
         LOG_ERROR(error);
         return false;
@@ -180,6 +184,8 @@ SqlTable::getAllFromDb(TableItem &resultTable,
  * @param conditions conditions to filter table
  * @param error reference for error-output
  * @param showHiddenValues include values in output, which should normally be hidden
+ * @param positionOffset offset of the rows to return
+ * @param numberOfRows maximum number of results. if 0 then this value and the offset are ignored
  *
  * @return true, if successful, else false
  */
@@ -187,9 +193,15 @@ bool
 SqlTable::getFromDb(TableItem &resultTable,
                     const std::vector<RequestCondition> &conditions,
                     ErrorContainer &error,
-                    const bool showHiddenValues)
+                    const bool showHiddenValues,
+                    const uint64_t positionOffset,
+                    const uint64_t numberOfRows)
 {
-    if(m_db->execSqlCommand(&resultTable, createSelectQuery(conditions, 0, 0), error) == false)
+    if(m_db->execSqlCommand(&resultTable,
+                            createSelectQuery(conditions,
+                                              positionOffset,
+                                              numberOfRows),
+                            error) == false)
     {
         LOG_ERROR(error);
         return false;
@@ -225,6 +237,8 @@ SqlTable::getFromDb(TableItem &resultTable,
  * @param conditions conditions to filter table
  * @param error reference for error-output
  * @param showHiddenValues include values in output, which should normally be hidden
+ * @param positionOffset offset of the rows to return
+ * @param numberOfRows maximum number of results. if 0 then this value and the offset are ignored
  *
  * @return true, if successful, else false
  */
@@ -232,7 +246,9 @@ bool
 SqlTable::getFromDb(Json::JsonItem &result,
                     const std::vector<RequestCondition> &conditions,
                     ErrorContainer &error,
-                    const bool showHiddenValues)
+                    const bool showHiddenValues,
+                    const uint64_t positionOffset,
+                    const uint64_t numberOfRows)
 {
     // precheck
     if(conditions.size() == 0)
@@ -244,7 +260,11 @@ SqlTable::getFromDb(Json::JsonItem &result,
 
     // run select-query
     TableItem tableResult;
-    if(m_db->execSqlCommand(&tableResult, createSelectQuery(conditions, 0, 0), error) == false)
+    if(m_db->execSqlCommand(&tableResult,
+                            createSelectQuery(conditions,
+                                              positionOffset,
+                                              numberOfRows),
+                            error) == false)
     {
         LOG_ERROR(error);
         return false;
