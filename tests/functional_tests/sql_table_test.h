@@ -33,6 +33,7 @@ private:
     void getAll_test();
     void update_test();
     void delete_test();
+    void getNumberOfRows_test();
 };
 
 }
