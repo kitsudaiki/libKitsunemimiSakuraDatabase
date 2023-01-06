@@ -25,6 +25,7 @@ SqlTable_Test::SqlTable_Test()
     getAll_test();
     update_test();
     delete_test();
+    getNumberOfRows_test();
 }
 
 /**
@@ -56,7 +57,7 @@ SqlTable_Test::initTable_test()
 {
     m_table = new TestTable(m_db);
     ErrorContainer error;
-    m_table->initTable(error);
+    TEST_EQUAL(m_table->initTable(error), true);
 }
 
 /**
@@ -169,6 +170,33 @@ SqlTable_Test::delete_test()
     m_table->getUser(result3, m_name1, error, true);
     TEST_EQUAL(result2.getNumberOfRows(), 0);
     TEST_EQUAL(result2.getNumberOfColums(), 2);
+}
+
+/**
+ * @brief getNumberOfRows_test
+ */
+void
+SqlTable_Test::getNumberOfRows_test()
+{
+    ErrorContainer error;
+
+    TEST_EQUAL(m_table->getNumberOfUsers(error), 0);
+
+    Kitsunemimi::Json::JsonItem testData;
+    testData.insert("name", m_name1);
+    testData.insert("pw_hash", "secret");
+    testData.insert("is_admin", true);
+    m_table->addUser(testData, error);
+
+    TEST_EQUAL(m_table->getNumberOfUsers(error), 1);
+
+    Kitsunemimi::Json::JsonItem testData2;
+    testData2.insert("name", m_name2);
+    testData2.insert("pw_hash", "secret2");
+    testData2.insert("is_admin", false);
+    m_table->addUser(testData2, error);
+
+    TEST_EQUAL(m_table->getNumberOfUsers(error), 2);
 }
 
 /**

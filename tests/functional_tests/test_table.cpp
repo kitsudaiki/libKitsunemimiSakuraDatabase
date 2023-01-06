@@ -84,6 +84,14 @@ TestTable::updateUser(const std::string &userID,
 }
 
 /**
+ * @brief getNumberOfUsers
+ */
+long TestTable::getNumberOfUsers(ErrorContainer &error)
+{
+    return getNumberOfRows(error);
+}
+
+/**
  * @brief getAllUser
  */
 bool

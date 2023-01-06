@@ -34,6 +34,7 @@ public:
     bool updateUser(const std::string &userID,
                     const Kitsunemimi::Json::JsonItem &values,
                     ErrorContainer &error);
+    long getNumberOfUsers(ErrorContainer &error);
 };
 
 }

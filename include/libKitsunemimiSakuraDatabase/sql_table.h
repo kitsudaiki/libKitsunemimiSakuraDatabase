@@ -101,6 +101,7 @@ protected:
                    const std::vector<RequestCondition> &conditions,
                    ErrorContainer &error,
                    const bool showHiddenValues = false);
+    long getNumberOfRows(ErrorContainer &error);
     bool deleteAllFromDb(ErrorContainer &error);
     bool deleteFromDb(const std::vector<RequestCondition> &conditions,
                       ErrorContainer &error);
@@ -113,6 +114,7 @@ private:
                                         const Json::JsonItem &updates);
     const std::string createInsertQuery(const std::vector<std::string> &values);
     const std::string createDeleteQuery(const std::vector<RequestCondition> &conditions);
+    const std::string createCountQuery();
 
     bool processGetResult(Kitsunemimi::Json::JsonItem &result,
                           Kitsunemimi::TableItem &tableContent);

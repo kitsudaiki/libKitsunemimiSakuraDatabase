@@ -271,6 +271,24 @@ SqlTable::getFromDb(Json::JsonItem &result,
 }
 
 /**
+ * @brief Request number of rows of the database-table
+ *
+ * @param error reference for error-output
+ *
+ * @return -1 if request against database failed, else number of rows
+ */
+long
+SqlTable::getNumberOfRows(ErrorContainer &error)
+{
+    Kitsunemimi::TableItem resultItem;
+    if(m_db->execSqlCommand(&resultItem, createCountQuery(), error) == false) {
+        return -1;
+    }
+
+    return resultItem.getBody()->get(0)->get(0)->toValue()->getLong();
+}
+
+/**
  * @brief delete all entries for the table
  *
  * @param error reference for error-output
@@ -526,6 +544,21 @@ SqlTable::createDeleteQuery(const std::vector<RequestCondition> &conditions)
         }
     }
     command.append(" ;");
+
+    return command;
+}
+
+/**
+ * @brief create a sql-query to request number of rows of the table
+ *
+ * @return created sql-query
+ */
+const std::string
+SqlTable::createCountQuery()
+{
+    std::string command  = "SELECT COUNT(*) as number_of_rows FROM ";
+    command.append(m_tableName);
+    command.append(";");
 
     return command;
 }
