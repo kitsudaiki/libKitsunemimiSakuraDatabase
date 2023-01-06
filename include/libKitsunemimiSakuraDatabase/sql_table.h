@@ -92,7 +92,9 @@ protected:
                     ErrorContainer &error);
     bool getAllFromDb(TableItem &resultTable,
                       ErrorContainer &error,
-                      const bool showHiddenValues = false);
+                      const bool showHiddenValues = false,
+                      const uint64_t positionOffset = 0,
+                      const uint64_t numberOfRows = 0);
     bool getFromDb(TableItem &resultTable,
                    const std::vector<RequestCondition> &conditions,
                    ErrorContainer &error,
@@ -109,7 +111,9 @@ private:
     SqlDatabase* m_db = nullptr;
 
     const std::string createTableCreateQuery();
-    const std::string createSelectQuery(const std::vector<RequestCondition> &conditions);
+    const std::string createSelectQuery(const std::vector<RequestCondition> &conditions,
+                                        const uint64_t positionOffset,
+                                        const uint64_t numberOfRows);
     const std::string createUpdateQuery(const std::vector<RequestCondition> &conditions,
                                         const Json::JsonItem &updates);
     const std::string createInsertQuery(const std::vector<std::string> &values);

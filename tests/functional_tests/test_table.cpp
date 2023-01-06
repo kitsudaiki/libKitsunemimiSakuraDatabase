@@ -97,9 +97,11 @@ long TestTable::getNumberOfUsers(ErrorContainer &error)
 bool
 TestTable::getAllUser(TableItem &resultItem,
                       ErrorContainer &error,
-                      const bool showHiddenValues)
+                      const bool showHiddenValues,
+                      const uint64_t positionOffset,
+                      const uint64_t numberOfRows)
 {
-    return getAllFromDb(resultItem, error, showHiddenValues);
+    return getAllFromDb(resultItem, error, showHiddenValues, positionOffset, numberOfRows);
 }
 
 /**

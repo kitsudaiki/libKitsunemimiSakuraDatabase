@@ -123,6 +123,13 @@ SqlTable_Test::getAll_test()
     TEST_EQUAL(m_table->getAllUser(result, error, true), true);
     TEST_EQUAL(result.getNumberOfRows(), 2);
     TEST_EQUAL(result.getNumberOfColums(), 3);
+
+    // test with limitation
+    result.clearTable();
+    TEST_EQUAL(m_table->getAllUser(result, error, true, 1, 10), true);
+    TEST_EQUAL(result.getNumberOfRows(), 1);
+    TEST_EQUAL(result.getNumberOfColums(), 3);
+    TEST_EQUAL(result.getCell(0, 0), m_name2);
 }
 
 /**

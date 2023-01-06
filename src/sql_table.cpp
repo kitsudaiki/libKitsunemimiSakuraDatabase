@@ -131,16 +131,20 @@ SqlTable::updateInDb(const std::vector<RequestCondition> &conditions,
  * @param resultTable pointer to table for the resuld of the query
  * @param error reference for error-output
  * @param showHiddenValues include values in output, which should normally be hidden
+ * @param positionOffset offset of the rows to return
+ * @param numberOfRows maximum number of results. if 0 then this value and the offset are ignored
  *
  * @return true, if successful, else false
  */
 bool
 SqlTable::getAllFromDb(TableItem &resultTable,
                        ErrorContainer &error,
-                       const bool showHiddenValues)
+                       const bool showHiddenValues,
+                       const uint64_t positionOffset,
+                       const uint64_t numberOfRows)
 {
     std::vector<RequestCondition> conditions;
-    if(m_db->execSqlCommand(&resultTable, createSelectQuery(conditions), error) == false)
+    if(m_db->execSqlCommand(&resultTable, createSelectQuery(conditions, positionOffset, numberOfRows), error) == false)
     {
         LOG_ERROR(error);
         return false;
@@ -185,7 +189,7 @@ SqlTable::getFromDb(TableItem &resultTable,
                     ErrorContainer &error,
                     const bool showHiddenValues)
 {
-    if(m_db->execSqlCommand(&resultTable, createSelectQuery(conditions), error) == false)
+    if(m_db->execSqlCommand(&resultTable, createSelectQuery(conditions, 0, 0), error) == false)
     {
         LOG_ERROR(error);
         return false;
@@ -240,7 +244,7 @@ SqlTable::getFromDb(Json::JsonItem &result,
 
     // run select-query
     TableItem tableResult;
-    if(m_db->execSqlCommand(&tableResult, createSelectQuery(conditions), error) == false)
+    if(m_db->execSqlCommand(&tableResult, createSelectQuery(conditions, 0, 0), error) == false)
     {
         LOG_ERROR(error);
         return false;
@@ -394,13 +398,19 @@ SqlTable::createTableCreateQuery()
  * @brief create a sql-query to get a line from the table
  *
  * @param conditions conditions to filter table
+ * @param positionOffset offset of the rows to return
+ * @param numberOfRows maximum number of results. if 0 then this value and the offset are ignored
  *
  * @return created sql-query
  */
 const std::string
-SqlTable::createSelectQuery(const std::vector<RequestCondition> &conditions)
+SqlTable::createSelectQuery(const std::vector<RequestCondition> &conditions,
+                            const uint64_t positionOffset,
+                            const uint64_t numberOfRows)
 {
     std::string command = "SELECT * from " + m_tableName;
+
+    // filter
     if(conditions.size() > 0)
     {
         command.append(" WHERE ");
@@ -417,6 +427,16 @@ SqlTable::createSelectQuery(const std::vector<RequestCondition> &conditions)
             command.append("' ");
         }
     }
+
+    // limit number of results
+    if(numberOfRows > 0)
+    {
+        command.append(" LIMIT ");
+        command.append(std::to_string(numberOfRows));
+        command.append(" OFFSET ");
+        command.append(std::to_string(positionOffset));
+    }
+
     command.append(" ;");
 
     return command;

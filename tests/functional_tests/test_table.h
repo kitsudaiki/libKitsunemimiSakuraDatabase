@@ -28,7 +28,9 @@ public:
                  const bool showHiddenValues = false);
     bool getAllUser(TableItem &resultItem,
                     ErrorContainer &error,
-                    const bool showHiddenValues = false);
+                    const bool showHiddenValues = false,
+                    const uint64_t positionOffset = 0,
+                    const uint64_t numberOfRows = 0);
     bool deleteUser(const std::string &userID,
                     ErrorContainer &error);
     bool updateUser(const std::string &userID,
