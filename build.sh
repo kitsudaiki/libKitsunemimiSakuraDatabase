@@ -90,18 +90,18 @@ function get_required_kitsune_lib_repo () {
 
 #-----------------------------------------------------------------------------------------------------------------
 
-get_required_kitsune_lib_repo "libKitsunemimiCommon" "develop" 8 "staticlib"
+get_required_kitsune_lib_repo "libKitsunemimiCommon" "develop" 8 
 
-get_required_kitsune_lib_repo "libKitsunemimiJson" "develop" 1 "staticlib"
+get_required_kitsune_lib_repo "libKitsunemimiJson" "develop" 1
 
-get_required_kitsune_lib_repo "libKitsunemimiSqlite" "develop" 8 "staticlib"
+get_required_kitsune_lib_repo "libKitsunemimiSqlite" "develop" 8 
 
 #-----------------------------------------------------------------------------------------------------------------
 
 if [ $1 = "test" ]; then
-    build_kitsune_lib_repo "libKitsunemimiSakuraDatabase" 4 "staticlib run_tests"
+    build_kitsune_lib_repo "libKitsunemimiSakuraDatabase" 4 "run_tests"
 else
-    build_kitsune_lib_repo "libKitsunemimiSakuraDatabase" 4 "staticlib"
+    build_kitsune_lib_repo "libKitsunemimiSakuraDatabase" 4 ""
 fi
 
 #-----------------------------------------------------------------------------------------------------------------
