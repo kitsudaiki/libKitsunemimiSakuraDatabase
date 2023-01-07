@@ -68,7 +68,7 @@ SqlTable_Test::create_test()
 {
     ErrorContainer error;
 
-    Kitsunemimi::Json::JsonItem testData;
+    JsonItem testData;
     testData.insert("name", m_name1);
     testData.insert("pw_hash", "secret");
     testData.insert("is_admin", true);
@@ -76,7 +76,7 @@ SqlTable_Test::create_test()
     TEST_EQUAL(m_table->addUser(testData, error), true);
 
 
-    Kitsunemimi::Json::JsonItem testData2;
+    JsonItem testData2;
     testData2.insert("name", m_name2);
     testData2.insert("pw_hash", "secret2");
     testData2.insert("is_admin", false);
@@ -90,7 +90,7 @@ SqlTable_Test::create_test()
 void
 SqlTable_Test::get_test()
 {
-    Kitsunemimi::Json::JsonItem resultItem;
+    JsonItem resultItem;
     TableItem resultTable;
     ErrorContainer error;
 
@@ -140,12 +140,12 @@ SqlTable_Test::update_test()
 {
     ErrorContainer error;
 
-    Kitsunemimi::Json::JsonItem updateDate;
+    JsonItem updateDate;
     updateDate.insert("pw_hash", "secret2");
     updateDate.insert("is_admin", false);
     TEST_EQUAL(m_table->updateUser(m_name1, updateDate, error), true);
 
-    Kitsunemimi::Json::JsonItem resultItem;
+    JsonItem resultItem;
     TableItem resultTable;
 
     TEST_EQUAL(m_table->getUser(resultItem, m_name1, error, true), true);
@@ -189,7 +189,7 @@ SqlTable_Test::getNumberOfRows_test()
 
     TEST_EQUAL(m_table->getNumberOfUsers(error), 0);
 
-    Kitsunemimi::Json::JsonItem testData;
+    JsonItem testData;
     testData.insert("name", m_name1);
     testData.insert("pw_hash", "secret");
     testData.insert("is_admin", true);
@@ -197,7 +197,7 @@ SqlTable_Test::getNumberOfRows_test()
 
     TEST_EQUAL(m_table->getNumberOfUsers(error), 1);
 
-    Kitsunemimi::Json::JsonItem testData2;
+    JsonItem testData2;
     testData2.insert("name", m_name2);
     testData2.insert("pw_hash", "secret2");
     testData2.insert("is_admin", false);

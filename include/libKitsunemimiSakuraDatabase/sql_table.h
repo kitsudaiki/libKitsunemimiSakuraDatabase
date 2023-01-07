@@ -30,14 +30,10 @@
 #include <libKitsunemimiCommon/items/data_items.h>
 #include <libKitsunemimiCommon/logger.h>
 
-namespace Kitsunemimi {
-namespace Json {
-class JsonItem;
-}
-}
-
 namespace Kitsunemimi
 {
+class JsonItem;
+
 namespace Sakura
 {
 class SqlDatabase;
@@ -85,10 +81,10 @@ protected:
     std::vector<DbHeaderEntry> m_tableHeader;
     std::string m_tableName = "";
 
-    bool insertToDb(Json::JsonItem &values,
+    bool insertToDb(JsonItem &values,
                     ErrorContainer &error);
     bool updateInDb(const std::vector<RequestCondition> &conditions,
-                    const Json::JsonItem &updates,
+                    const JsonItem &updates,
                     ErrorContainer &error);
     bool getAllFromDb(TableItem &resultTable,
                       ErrorContainer &error,
@@ -101,7 +97,7 @@ protected:
                    const bool showHiddenValues = false,
                    const uint64_t positionOffset = 0,
                    const uint64_t numberOfRows = 0);
-    bool getFromDb(Json::JsonItem &result,
+    bool getFromDb(JsonItem &result,
                    const std::vector<RequestCondition> &conditions,
                    ErrorContainer &error,
                    const bool showHiddenValues = false,
@@ -119,13 +115,13 @@ private:
                                         const uint64_t positionOffset,
                                         const uint64_t numberOfRows);
     const std::string createUpdateQuery(const std::vector<RequestCondition> &conditions,
-                                        const Json::JsonItem &updates);
+                                        const JsonItem &updates);
     const std::string createInsertQuery(const std::vector<std::string> &values);
     const std::string createDeleteQuery(const std::vector<RequestCondition> &conditions);
     const std::string createCountQuery();
 
-    bool processGetResult(Kitsunemimi::Json::JsonItem &result,
-                          Kitsunemimi::TableItem &tableContent);
+    bool processGetResult(JsonItem &result,
+                          TableItem &tableContent);
 };
 
 } // namespace Sakura

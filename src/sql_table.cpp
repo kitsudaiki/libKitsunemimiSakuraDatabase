@@ -68,7 +68,7 @@ SqlTable::initTable(ErrorContainer &error)
  * @return uuid of the new entry, if successful, else empty string
  */
 bool
-SqlTable::insertToDb(Json::JsonItem &values,
+SqlTable::insertToDb(JsonItem &values,
                      ErrorContainer &error)
 {
     Kitsunemimi::TableItem resultItem;
@@ -110,7 +110,7 @@ SqlTable::insertToDb(Json::JsonItem &values,
  */
 bool
 SqlTable::updateInDb(const std::vector<RequestCondition> &conditions,
-                     const Json::JsonItem &updates,
+                     const JsonItem &updates,
                      ErrorContainer &error)
 {
     // precheck
@@ -243,7 +243,7 @@ SqlTable::getFromDb(TableItem &resultTable,
  * @return true, if successful, else false
  */
 bool
-SqlTable::getFromDb(Json::JsonItem &result,
+SqlTable::getFromDb(JsonItem &result,
                     const std::vector<RequestCondition> &conditions,
                     ErrorContainer &error,
                     const bool showHiddenValues,
@@ -472,7 +472,7 @@ SqlTable::createSelectQuery(const std::vector<RequestCondition> &conditions,
  */
 const std::string
 SqlTable::createUpdateQuery(const std::vector<RequestCondition> &conditions,
-                            const Kitsunemimi::Json::JsonItem &updates)
+                            const JsonItem &updates)
 {
     std::string command  = "UPDATE ";
     command.append(m_tableName);
@@ -486,7 +486,7 @@ SqlTable::createUpdateQuery(const std::vector<RequestCondition> &conditions,
             command.append(" , ");
         }
         command.append(keys.at(i));
-        Kitsunemimi::Json::JsonItem val = updates.get(keys.at(i));
+        JsonItem val = updates.get(keys.at(i));
         command.append("='" + val.toString() + "' ");
     }
 
@@ -612,7 +612,7 @@ SqlTable::createCountQuery()
  * @return false, if table is empty, else true
  */
 bool
-SqlTable::processGetResult(Json::JsonItem &result,
+SqlTable::processGetResult(JsonItem &result,
                            TableItem &tableContent)
 {
     if(tableContent.getNumberOfRows() == 0) {
