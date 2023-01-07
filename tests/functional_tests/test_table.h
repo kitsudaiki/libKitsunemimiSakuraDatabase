@@ -16,13 +16,13 @@ public:
     TestTable(Kitsunemimi::Sakura::SqlDatabase* db);
     ~TestTable();
 
-    bool addUser(Json::JsonItem &data,
+    bool addUser(JsonItem &data,
                  ErrorContainer &error);
     bool getUser(TableItem &resultTable,
                  const std::string &userID,
                  ErrorContainer &error,
                  const bool withHideValues = false);
-    bool getUser(Json::JsonItem &resultItem,
+    bool getUser(JsonItem &resultItem,
                  const std::string &userID,
                  ErrorContainer &error,
                  const bool showHiddenValues = false);
@@ -34,7 +34,7 @@ public:
     bool deleteUser(const std::string &userID,
                     ErrorContainer &error);
     bool updateUser(const std::string &userID,
-                    const Kitsunemimi::Json::JsonItem &values,
+                    const JsonItem &values,
                     ErrorContainer &error);
     long getNumberOfUsers(ErrorContainer &error);
 };

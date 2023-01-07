@@ -28,9 +28,7 @@
 
 namespace Kitsunemimi
 {
-namespace Sqlite {
 class Sqlite;
-}
 namespace Sakura
 {
 
@@ -54,7 +52,7 @@ private:
     bool m_isOpen = false;
     std::string m_path = "";
 
-    Kitsunemimi::Sqlite::Sqlite m_db;
+    Kitsunemimi::Sqlite m_db;
 };
 
 } // namespace Sakura

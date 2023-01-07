@@ -36,7 +36,7 @@ TestTable::~TestTable() {}
  * @brief addUser
  */
 bool
-TestTable::addUser(Kitsunemimi::Json::JsonItem &data,
+TestTable::addUser(JsonItem &data,
                    ErrorContainer &error)
 {
     return insertToDb(data, error);
@@ -60,7 +60,7 @@ TestTable::getUser(TableItem &resultTable,
  * @brief getUser
  */
 bool
-TestTable::getUser(Kitsunemimi::Json::JsonItem &resultItem,
+TestTable::getUser(JsonItem &resultItem,
                    const std::string &userID,
                    ErrorContainer &error,
                    const bool withHideValues)
@@ -75,7 +75,7 @@ TestTable::getUser(Kitsunemimi::Json::JsonItem &resultItem,
  */
 bool
 TestTable::updateUser(const std::string &userID,
-                      const Kitsunemimi::Json::JsonItem &values,
+                      const JsonItem &values,
                       ErrorContainer &error)
 {
     std::vector<RequestCondition> conditions;
